@@ -22,9 +22,11 @@ export default function AssetView({ hit }: { hit: SearchHit }) {
     const ctrl = new AbortController();
     (async () => {
       try {
-        const r = await fetch(`/api/asset?kind=${hit.kind}&id=${encodeURIComponent(hit.id)}`, {
-          signal: ctrl.signal,
-        });
+        const url =
+          hit.id === "__demo__"
+            ? `/api/asset?demo=1`
+            : `/api/asset?kind=${hit.kind}&id=${encodeURIComponent(hit.id)}`;
+        const r = await fetch(url, { signal: ctrl.signal });
         const j = await r.json();
         if (!r.ok) throw new Error(j.error || `HTTP ${r.status}`);
         setData(j);

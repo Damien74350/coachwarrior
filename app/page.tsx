@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import SearchBar from "@/components/SearchBar";
 import AssetView from "@/components/AssetView";
 import type { SearchHit } from "@/lib/types";
-import { Sparkles } from "lucide-react";
+import { Sparkles, PlayCircle } from "lucide-react";
 
 const QUICK_PICKS: SearchHit[] = [
   { kind: "crypto", id: "bitcoin", symbol: "BTC", name: "Bitcoin", thumb: "https://assets.coingecko.com/coins/images/1/large/bitcoin.png" },
@@ -52,8 +52,18 @@ export default function Home() {
         </p>
       </header>
 
-      <div className="mb-6">
+      <div className="mb-4">
         <SearchBar onSelect={pick} />
+      </div>
+
+      <div className="mb-6 flex justify-center">
+        <button
+          onClick={() => pick({ kind: "crypto", id: "__demo__", symbol: "DEMO", name: "Mode démo" })}
+          className="inline-flex items-center gap-2 rounded-xl border border-accent/40 bg-accent/10 px-4 py-2 text-sm font-semibold text-accent hover:bg-accent/20"
+        >
+          <PlayCircle className="h-4 w-4" />
+          Lancer la démo (sans API)
+        </button>
       </div>
 
       {!hit && (
