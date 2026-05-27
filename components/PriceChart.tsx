@@ -18,11 +18,24 @@ const ranges: { id: Range; days: number | null; label: string }[] = [
 export default function PriceChart({ history, currency }: { history: PricePoint[]; currency: string }) {
   const [range, setRange] = useState<Range>("3M");
 
+  const safeHistory = useMemo(
+    () => (history || []).filter((p) => p && typeof p.c === "number" && Number.isFinite(p.c)),
+    [history]
+  );
+
   const sliced = useMemo(() => {
     const r = ranges.find((x) => x.id === range)!;
-    if (r.days === null) return history;
-    return history.slice(-r.days);
-  }, [history, range]);
+    if (r.days === null) return safeHistory;
+    return safeHistory.slice(-r.days);
+  }, [safeHistory, range]);
+
+  if (safeHistory.length === 0) {
+    return (
+      <div className="glass rounded-2xl p-5 text-sm text-muted">
+        Pas de données de prix disponibles pour cet actif.
+      </div>
+    );
+  }
 
   const data = useMemo(() => {
     const prices = sliced.map((p) => p.c);

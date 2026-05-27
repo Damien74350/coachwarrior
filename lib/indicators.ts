@@ -133,6 +133,24 @@ export interface AnalysisResult {
 }
 
 export function analyze(prices: number[]): AnalysisResult {
+  const clean = (prices || []).filter((p) => typeof p === "number" && Number.isFinite(p));
+  if (clean.length === 0) {
+    return {
+      signal: "HOLD",
+      score: 0,
+      confidence: 0,
+      reasons: [
+        { label: "Données insuffisantes", impact: "neutral", detail: "Aucun historique de prix disponible." },
+      ],
+      metrics: {
+        rsi: null, macd: null, macdSignal: null, macdHist: null,
+        sma20: null, sma50: null, sma200: null, ema12: null, ema26: null,
+        bbUpper: null, bbLower: null, bbMiddle: null,
+        price: 0, change7d: null, change30d: null, volatility30d: null,
+      },
+    };
+  }
+  prices = clean;
   const price = prices[prices.length - 1];
   const rsiVals = rsi(prices, 14);
   const macdVals = macd(prices);

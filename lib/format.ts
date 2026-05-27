@@ -4,20 +4,29 @@ export function fmtMoney(n: number | null | undefined, currency = "USD", maxDigi
   if (Math.abs(n) >= 1_000_000_000) return `${(n / 1e9).toFixed(2)}B $`;
   if (Math.abs(n) >= 1_000_000) return `${(n / 1e6).toFixed(2)}M $`;
   if (Math.abs(n) >= 1_000) return `${(n / 1e3).toFixed(2)}K $`;
-  if (Math.abs(n) < 0.01 && n !== 0) {
+  try {
+    if (Math.abs(n) < 0.01 && n !== 0) {
+      return new Intl.NumberFormat("fr-FR", {
+        style: "currency",
+        currency,
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 8,
+      }).format(n);
+    }
     return new Intl.NumberFormat("fr-FR", {
       style: "currency",
       currency,
       minimumFractionDigits: 2,
-      maximumFractionDigits: 8,
+      maximumFractionDigits: maxDigits,
     }).format(n);
+  } catch {
+    // Fallback if the currency code is invalid (e.g. Yahoo's "GBp").
+    const formatted = new Intl.NumberFormat("fr-FR", {
+      maximumFractionDigits: maxDigits,
+      minimumFractionDigits: 2,
+    }).format(n);
+    return `${formatted} ${currency}`;
   }
-  return new Intl.NumberFormat("fr-FR", {
-    style: "currency",
-    currency,
-    minimumFractionDigits: 2,
-    maximumFractionDigits: maxDigits,
-  }).format(n);
 }
 
 export function fmtNum(n: number | null | undefined, digits = 2): string {
