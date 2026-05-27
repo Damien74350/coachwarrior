@@ -8,6 +8,7 @@ import MetricsGrid from "./MetricsGrid";
 import IndicatorsPanel from "./IndicatorsPanel";
 import SignalBadge from "./SignalBadge";
 import ReasonsList from "./ReasonsList";
+import MarketSentimentCard from "./MarketSentiment";
 import { Loader2, AlertTriangle } from "lucide-react";
 
 export default function AssetView({ hit }: { hit: SearchHit }) {
@@ -84,6 +85,12 @@ export default function AssetView({ hit }: { hit: SearchHit }) {
       <div className="lg:col-span-1">
         <IndicatorsPanel analysis={data.analysis} />
       </div>
+
+      {data.sentiment && (
+        <div className="lg:col-span-3">
+          <MarketSentimentCard sentiment={data.sentiment} focus={data.summary.kind} />
+        </div>
+      )}
     </div>
   );
 }

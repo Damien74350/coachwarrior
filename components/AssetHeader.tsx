@@ -1,8 +1,20 @@
-import type { AssetSummary } from "@/lib/types";
+import type { AssetSummaryWithMeta } from "@/lib/types";
 import { fmtMoney, fmtPct } from "@/lib/format";
-import { ExternalLink, Coins, TrendingUp } from "lucide-react";
+import { ExternalLink, Coins, TrendingUp, Radio, Clock } from "lucide-react";
 
-export default function AssetHeader({ s }: { s: AssetSummary }) {
+function formatAsOf(asOf?: string | null): string | null {
+  if (!asOf) return null;
+  const d = new Date(asOf);
+  if (isNaN(d.getTime())) return null;
+  return d.toLocaleString("fr-FR", {
+    day: "2-digit",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+export default function AssetHeader({ s }: { s: AssetSummaryWithMeta }) {
   const up = (s.change24h ?? 0) >= 0;
   return (
     <div className="glass rounded-2xl p-5">
@@ -39,6 +51,23 @@ export default function AssetHeader({ s }: { s: AssetSummary }) {
             <div className={`text-lg font-semibold ${up ? "text-success" : "text-danger"}`}>
               {fmtPct(s.change24h)} <span className="text-xs text-muted">24h</span>
             </div>
+          </div>
+          <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px] text-muted">
+            <span
+              className={`inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 ${
+                s.priceLive ? "bg-success/10 text-success" : "bg-warning/10 text-warning"
+              }`}
+              title={s.priceLive ? "Prix temps réel" : "Cours de clôture (EOD)"}
+            >
+              <Radio className="h-3 w-3" />
+              {s.priceLive ? "Live" : "Différé"}
+            </span>
+            <span>Source : {s.dataSource}</span>
+            {formatAsOf(s.asOf) && (
+              <span className="inline-flex items-center gap-1">
+                <Clock className="h-3 w-3" /> {formatAsOf(s.asOf)}
+              </span>
+            )}
           </div>
           {s.homepage && (
             <a

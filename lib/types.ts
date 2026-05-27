@@ -66,8 +66,25 @@ export interface AssetSummary {
   fiftyTwoWeekLow?: number | null;
 }
 
+export interface AssetSummaryWithMeta extends AssetSummary {
+  dataSource: string; // "Yahoo Finance", "Stooq", "CoinGecko"
+  priceLive: boolean; // true if we got a real-time price, false if EOD-only
+  asOf?: string | null; // ISO timestamp of the price quote when known
+}
+
+export interface MarketSentiment {
+  cryptoIndex: number | null; // 0-100 (Fear & Greed - crypto)
+  cryptoLabel: string | null; // "Extreme Fear", "Fear", "Neutral", "Greed", "Extreme Greed"
+  cryptoChange1d: number | null;
+  cryptoChange7d: number | null;
+  cryptoHistory: { d: string; v: number }[]; // last 30 days
+  stockIndex: number | null; // 0-100 (CNN F&G - stocks)
+  stockLabel: string | null;
+}
+
 export interface AssetResponse {
-  summary: AssetSummary;
+  summary: AssetSummaryWithMeta;
   history: PricePoint[];
   analysis: AnalysisResult;
+  sentiment?: MarketSentiment;
 }

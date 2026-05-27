@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import SearchBar from "@/components/SearchBar";
 import AssetView from "@/components/AssetView";
-import type { SearchHit } from "@/lib/types";
+import MarketSentimentCard from "@/components/MarketSentiment";
+import type { MarketSentiment, SearchHit } from "@/lib/types";
 import { Sparkles, PlayCircle } from "lucide-react";
 
 const QUICK_PICKS: SearchHit[] = [
@@ -19,12 +20,20 @@ const QUICK_PICKS: SearchHit[] = [
 export default function Home() {
   const [hit, setHit] = useState<SearchHit | null>(null);
   const [history, setHistory] = useState<SearchHit[]>([]);
+  const [sentiment, setSentiment] = useState<MarketSentiment | null>(null);
 
   useEffect(() => {
     try {
       const raw = localStorage.getItem("cw:history");
       if (raw) setHistory(JSON.parse(raw));
     } catch {}
+  }, []);
+
+  useEffect(() => {
+    fetch("/api/sentiment")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j) => j && setSentiment(j))
+      .catch(() => {});
   }, []);
 
   function pick(h: SearchHit) {
@@ -68,6 +77,9 @@ export default function Home() {
 
       {!hit && (
         <div className="space-y-6">
+          {sentiment && (sentiment.cryptoIndex !== null || sentiment.stockIndex !== null) && (
+            <MarketSentimentCard sentiment={sentiment} focus="both" />
+          )}
           {history.length > 0 && (
             <div>
               <div className="mb-2 text-xs uppercase tracking-wider text-muted">Récemment consultés</div>

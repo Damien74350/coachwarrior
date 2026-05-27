@@ -55,8 +55,20 @@ export function getDemoBTC(): AssetResponse {
       description:
         "Bitcoin est la première et la plus grande crypto-monnaie au monde. Créée en 2009 par un développeur anonyme sous le pseudonyme de Satoshi Nakamoto, elle fonctionne sans autorité centrale grâce à un registre distribué (blockchain).",
       categories: ["Cryptocurrency", "Layer 1", "Proof of Work", "Store of Value"],
+      dataSource: "Démo (données simulées)",
+      priceLive: false,
+      asOf: new Date().toISOString(),
     },
     history,
     analysis: analyze(prices),
+    sentiment: {
+      cryptoIndex: 62,
+      cryptoLabel: "Avidité",
+      cryptoChange1d: 4,
+      cryptoChange7d: -3,
+      cryptoHistory: [],
+      stockIndex: 58,
+      stockLabel: "Avidité",
+    },
   };
 }
