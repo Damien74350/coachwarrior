@@ -314,6 +314,72 @@ function normalizeCurrency(c: string | undefined | null): string {
   return map[c] || c.toUpperCase();
 }
 
+// Stooq fallback — CSV daily data, very lenient, no auth.
+async function getStockFromStooq(sym: string): Promise<AssetResponse> {
+  const stooqSym = sym.includes(".") ? sym.toLowerCase() : `${sym.toLowerCase()}.us`;
+  const url = `https://stooq.com/q/d/l/?s=${encodeURIComponent(stooqSym)}&i=d`;
+  const res = await fetch(url, {
+    headers: { "User-Agent": BROWSER_UA, Accept: "text/csv,text/plain,*/*" },
+    next: { revalidate: 300 },
+  });
+  if (!res.ok) throw new Error(`Stooq HTTP ${res.status}`);
+  const text = await res.text();
+  const lines = text.trim().split("\n");
+  if (lines.length < 30 || !lines[0].toLowerCase().includes("date")) {
+    throw new Error(`Stooq: pas de données pour ${sym}`);
+  }
+  const history: PricePoint[] = [];
+  for (let i = 1; i < lines.length; i++) {
+    const parts = lines[i].split(",");
+    if (parts.length < 5) continue;
+    const date = parts[0];
+    const c = parseFloat(parts[4]);
+    if (!Number.isFinite(c)) continue;
+    const t = new Date(date).getTime();
+    if (!Number.isFinite(t)) continue;
+    history.push({ t, c, date });
+  }
+  history.sort((a, b) => a.t - b.t);
+  if (history.length < 30) throw new Error(`Stooq: historique insuffisant pour ${sym}`);
+
+  const prices = history.map((p) => p.c);
+  const price = prices[prices.length - 1];
+  const prev = prices[prices.length - 2] ?? price;
+  const change = (n: number) =>
+    prices.length > n ? ((price - prices[prices.length - 1 - n]) / prices[prices.length - 1 - n]) * 100 : null;
+
+  const last52 = prices.slice(-252);
+  const summary: AssetSummary = {
+    kind: "stock",
+    id: sym,
+    symbol: sym,
+    name: sym,
+    currency: "USD",
+    price,
+    change24h: prev ? ((price - prev) / prev) * 100 : null,
+    change7d: change(7),
+    change30d: change(30),
+    change1y: change(252),
+    marketCap: null,
+    volume24h: null,
+    high24h: null,
+    low24h: null,
+    ath: null,
+    atl: null,
+    exchange: stooqSym.endsWith(".us") ? "US" : stooqSym.split(".").pop()?.toUpperCase() || null,
+    fiftyTwoWeekHigh: last52.length > 0 ? Math.max(...last52) : null,
+    fiftyTwoWeekLow: last52.length > 0 ? Math.min(...last52) : null,
+    peRatio: null,
+    dividendYield: null,
+    beta: null,
+    bookValue: null,
+    sharesOutstanding: null,
+    homepage: null,
+    description: `Données de prix fournies par Stooq.`,
+  };
+  return { summary, history, analysis: analyze(prices) };
+}
+
 export async function getStock(symbol: string): Promise<AssetResponse> {
   const sym = symbol.toUpperCase();
   const chartUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(
@@ -323,14 +389,27 @@ export async function getStock(symbol: string): Promise<AssetResponse> {
     sym
   )}?modules=assetProfile,summaryDetail,defaultKeyStatistics,price,summaryProfile`;
 
-  const chart = await fetchJSON<YahooChartResp>(chartUrl);
+  let chart: YahooChartResp | null = null;
+  try {
+    chart = await fetchJSON<YahooChartResp>(chartUrl, undefined, 2);
+  } catch (e) {
+    // Yahoo blocks many cloud IPs — fall back to Stooq for the price data.
+    try {
+      return await getStockFromStooq(sym);
+    } catch (e2) {
+      const msg = e instanceof Error ? e.message : String(e);
+      const msg2 = e2 instanceof Error ? e2.message : String(e2);
+      throw new Error(`Yahoo: ${msg} | Stooq: ${msg2}`);
+    }
+  }
+  const results = chart?.chart.result;
+  if (!results || results.length === 0) {
+    return await getStockFromStooq(sym);
+  }
   // quoteSummary often requires a crumb cookie nowadays — try it, but don't block on failure.
   const sum = await fetchJSON<YahooQuoteSummaryResp>(summaryUrl, undefined, 2).catch(() => null);
 
-  if (!chart.chart.result?.length) {
-    throw new Error(`Aucune donnée pour ${sym}`);
-  }
-  const r = chart.chart.result[0];
+  const r = results[0];
   const closes = r.indicators.quote[0]?.close || [];
   const timestamps = r.timestamp || [];
 
@@ -340,7 +419,13 @@ export async function getStock(symbol: string): Promise<AssetResponse> {
     if (!isFiniteNum(c)) continue;
     history.push({ t: timestamps[i] * 1000, c, date: new Date(timestamps[i] * 1000).toISOString().slice(0, 10) });
   }
-  if (history.length < 30) throw new Error(`Historique insuffisant pour ${sym}`);
+  if (history.length < 30) {
+    try {
+      return await getStockFromStooq(sym);
+    } catch {
+      throw new Error(`Historique insuffisant pour ${sym}`);
+    }
+  }
 
   const prices = history.map((p) => p.c);
   const price = isFiniteNum(r.meta.regularMarketPrice) ? r.meta.regularMarketPrice : prices[prices.length - 1];
