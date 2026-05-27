@@ -2,13 +2,15 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { SearchHit } from "@/lib/types";
-import { Search, Coins, TrendingUp, Loader2 } from "lucide-react";
+import { detectChain } from "@/lib/wallet";
+import { Search, Coins, TrendingUp, Loader2, Wallet } from "lucide-react";
 
 interface Props {
   onSelect: (hit: SearchHit) => void;
+  onWallet?: (address: string) => void;
 }
 
-export default function SearchBar({ onSelect }: Props) {
+export default function SearchBar({ onSelect, onWallet }: Props) {
   const [q, setQ] = useState("");
   const [results, setResults] = useState<SearchHit[]>([]);
   const [loading, setLoading] = useState(false);
@@ -16,9 +18,17 @@ export default function SearchBar({ onSelect }: Props) {
   const [active, setActive] = useState(0);
   const wrapRef = useRef<HTMLDivElement>(null);
 
+  const walletChain = useMemo(() => detectChain(q.trim()), [q]);
+
   useEffect(() => {
     if (!q.trim()) {
       setResults([]);
+      return;
+    }
+    if (walletChain) {
+      // Wallet address detected → don't query the search API, just present the wallet option
+      setResults([]);
+      setLoading(false);
       return;
     }
     setLoading(true);
@@ -39,7 +49,7 @@ export default function SearchBar({ onSelect }: Props) {
       ctrl.abort();
       clearTimeout(id);
     };
-  }, [q]);
+  }, [q, walletChain]);
 
   useEffect(() => {
     function onClick(e: MouseEvent) {
@@ -49,7 +59,19 @@ export default function SearchBar({ onSelect }: Props) {
     return () => document.removeEventListener("mousedown", onClick);
   }, []);
 
+  function selectWallet() {
+    if (!onWallet) return;
+    onWallet(q.trim());
+    setOpen(false);
+    setQ("");
+  }
+
   function handleKey(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (walletChain && e.key === "Enter") {
+      e.preventDefault();
+      selectWallet();
+      return;
+    }
     if (!open || results.length === 0) return;
     if (e.key === "ArrowDown") {
       e.preventDefault();
@@ -70,7 +92,7 @@ export default function SearchBar({ onSelect }: Props) {
     }
   }
 
-  const showDropdown = open && (loading || results.length > 0);
+  const showDropdown = open && (loading || results.length > 0 || !!walletChain);
 
   return (
     <div className="relative w-full" ref={wrapRef}>
@@ -84,7 +106,7 @@ export default function SearchBar({ onSelect }: Props) {
           }}
           onFocus={() => setOpen(true)}
           onKeyDown={handleKey}
-          placeholder="Tapez un ticker, un nom (BTC, Bitcoin, AAPL, Tesla, NVDA…)"
+          placeholder="Ticker, nom, ou adresse de wallet (BTC, AAPL, SPY, 0x..., bc1...)"
           className="w-full bg-transparent text-base outline-none placeholder:text-muted"
           autoFocus
         />
@@ -93,10 +115,31 @@ export default function SearchBar({ onSelect }: Props) {
 
       {showDropdown && (
         <div className="glass scrollbar-thin absolute z-50 mt-2 max-h-96 w-full overflow-auto rounded-2xl border border-border p-1 shadow-2xl shadow-black/40">
-          {loading && results.length === 0 && (
+          {walletChain && (
+            <button
+              onClick={selectWallet}
+              className="flex w-full items-center gap-3 rounded-xl bg-accent/10 px-3 py-3 text-left transition hover:bg-accent/20"
+            >
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent/20 text-accent">
+                <Wallet className="h-4 w-4" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2">
+                  <span className="font-semibold">Inspecter ce wallet</span>
+                  <span className="rounded-md bg-accent/20 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-accent">
+                    {walletChain === "evm" ? "Ethereum" : walletChain === "bitcoin" ? "Bitcoin" : "Solana"}
+                  </span>
+                </div>
+                <div className="mt-0.5 font-mono text-xs text-muted">
+                  {q.trim().slice(0, 16)}…{q.trim().slice(-8)}
+                </div>
+              </div>
+            </button>
+          )}
+          {!walletChain && loading && results.length === 0 && (
             <div className="p-3 text-sm text-muted">Recherche…</div>
           )}
-          {results.length === 0 && !loading && (
+          {!walletChain && results.length === 0 && !loading && (
             <div className="p-3 text-sm text-muted">Aucun résultat</div>
           )}
           {results.map((r, i) => (
@@ -132,10 +175,20 @@ export default function SearchBar({ onSelect }: Props) {
                     className={`rounded-md px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
                       r.kind === "crypto"
                         ? "bg-accent2/10 text-accent2"
+                        : r.subKind === "etf"
+                        ? "bg-warning/10 text-warning"
+                        : r.subKind === "index"
+                        ? "bg-muted/10 text-muted"
                         : "bg-accent/10 text-accent"
                     }`}
                   >
-                    {r.kind}
+                    {r.kind === "crypto"
+                      ? "Crypto"
+                      : r.subKind === "etf"
+                      ? "ETF"
+                      : r.subKind === "index"
+                      ? "Indice"
+                      : "Action"}
                   </span>
                   {r.exchange && <span>{r.exchange}</span>}
                   {r.marketCapRank && <span>Rank #{r.marketCapRank}</span>}

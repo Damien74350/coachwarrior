@@ -315,6 +315,12 @@ export async function searchStock(q: string): Promise<SearchHit[]> {
       .slice(0, 10)
       .map((q) => ({
         kind: "stock" as const,
+        subKind:
+          q.quoteType === "ETF"
+            ? ("etf" as const)
+            : q.quoteType === "INDEX"
+            ? ("index" as const)
+            : ("equity" as const),
         id: q.symbol,
         symbol: q.symbol,
         name: q.longname || q.shortname || q.symbol,

@@ -4,6 +4,7 @@ export type AssetKind = "crypto" | "stock";
 
 export interface SearchHit {
   kind: AssetKind;
+  subKind?: "equity" | "etf" | "index" | "crypto"; // for finer UI tagging
   id: string; // coingecko id OR stock symbol
   symbol: string;
   name: string;
