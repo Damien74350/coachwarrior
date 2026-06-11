@@ -67,7 +67,7 @@ export default function LeaderboardPage() {
       </header>
 
       <div className="flex flex-wrap gap-3">
-        <div className="flex items-center gap-1 rounded-xl bg-white/5 p-1 ring-1 ring-white/10 overflow-x-auto scrollbar-thin">
+        <div className="flex items-center gap-1 rounded-xl bg-overlay/5 p-1 ring-1 ring-overlay/10 overflow-x-auto scrollbar-thin">
           {([
             { v: "friends",      label: "Mes amis",    icon: Heart      },
             { v: "neighborhood", label: "Mon quartier",icon: MapPin     },
@@ -79,7 +79,7 @@ export default function LeaderboardPage() {
               key={o.v}
               onClick={() => setScope(o.v)}
               className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition ${
-                scope === o.v ? "bg-war text-white" : "text-muted hover:text-white"
+                scope === o.v ? "bg-war text-foreground" : "text-muted hover:text-foreground"
               }`}
             >
               <o.icon size={13} /> {o.label}
@@ -87,7 +87,7 @@ export default function LeaderboardPage() {
           ))}
         </div>
 
-        <div className="flex items-center gap-1 rounded-xl bg-white/5 p-1 ring-1 ring-white/10">
+        <div className="flex items-center gap-1 rounded-xl bg-overlay/5 p-1 ring-1 ring-overlay/10">
           {([
             { v: "season", label: <><Snowflake size={12} className="inline -mt-0.5 mr-1" />Saison en cours</> },
             { v: "alltime", label: <><Archive size={12} className="inline -mt-0.5 mr-1" />Tout-temps (archive)</> },
@@ -96,7 +96,7 @@ export default function LeaderboardPage() {
               key={o.v}
               onClick={() => setPeriod(o.v)}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${
-                period === o.v ? "bg-flame text-black" : "text-muted hover:text-white"
+                period === o.v ? "bg-flame text-black" : "text-muted hover:text-foreground"
               }`}
             >
               {o.label}
@@ -146,7 +146,7 @@ export default function LeaderboardPage() {
             { title: "Quartier", icon: MapPin, text: "Fierté locale + scale humaine. Tu croises ces gens à la boulangerie." },
             { title: "Club", icon: Building2, text: "Ta tribu d'entraînement. Le tableau qui s'affiche à l'écran de l'accueil." },
           ].map(o => (
-            <div key={o.title} className="rounded-xl bg-white/5 p-4">
+            <div key={o.title} className="rounded-xl bg-overlay/5 p-4">
               <o.icon size={18} className="text-flame mb-2" />
               <p className="font-bold">{o.title}</p>
               <p className="text-xs text-muted mt-1">{o.text}</p>

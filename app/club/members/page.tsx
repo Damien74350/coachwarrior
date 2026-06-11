@@ -42,7 +42,7 @@ export default function MembersPage() {
 
       <Card>
         <div className="flex flex-col sm:flex-row gap-3 mb-4">
-          <div className="flex-1 flex items-center gap-2 rounded-xl bg-white/5 ring-1 ring-white/10 px-3 py-2">
+          <div className="flex-1 flex items-center gap-2 rounded-xl bg-overlay/5 ring-1 ring-overlay/10 px-3 py-2">
             <Search size={16} className="text-muted" />
             <input
               value={q}
@@ -51,14 +51,14 @@ export default function MembersPage() {
               className="bg-transparent outline-none w-full text-sm"
             />
           </div>
-          <div className="flex items-center gap-1 rounded-xl bg-white/5 p-1 ring-1 ring-white/10 overflow-x-auto scrollbar-thin">
+          <div className="flex items-center gap-1 rounded-xl bg-overlay/5 p-1 ring-1 ring-overlay/10 overflow-x-auto scrollbar-thin">
             <Filter size={14} className="text-muted ml-2" />
             {["ALL", "BRONZE", "SILVER", "GOLD", "PLATINUM", "DIAMOND", "LEGEND"].map(t => (
               <button
                 key={t}
                 onClick={() => setTier(t)}
                 className={`px-3 py-1 rounded-lg text-xs font-bold whitespace-nowrap transition ${
-                  tier === t ? "bg-war text-white" : "text-muted hover:text-white"
+                  tier === t ? "bg-war text-foreground" : "text-muted hover:text-foreground"
                 }`}
               >
                 {t === "ALL" ? "Tous" : tierLabel(t)}
@@ -81,10 +81,10 @@ export default function MembersPage() {
             </thead>
             <tbody>
               {filtered.slice(0, 100).map(u => (
-                <tr key={u.id} className="border-b border-border/50 hover:bg-white/5">
+                <tr key={u.id} className="border-b border-border/50 hover:bg-overlay/5">
                   <td className="py-2 px-2">
                     <div className="flex items-center gap-2">
-                      <div className="grid place-items-center w-8 h-8 rounded-lg bg-white/10 font-bold text-xs">{u.avatar}</div>
+                      <div className="grid place-items-center w-8 h-8 rounded-lg bg-overlay/10 font-bold text-xs">{u.avatar}</div>
                       <div>
                         <p className="font-semibold">{u.name}{u.id === "me" && <span className="ml-1 text-[10px] text-war font-bold">TOI</span>}</p>
                         <p className="text-[10px] text-muted">{u.countryCode} {u.city}</p>

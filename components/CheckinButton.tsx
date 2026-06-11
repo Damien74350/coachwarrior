@@ -29,7 +29,7 @@ export function CheckinButton({ size = "default" }: { size?: "default" | "small"
       {open && (
         <div className="fixed inset-0 z-50 grid place-items-center bg-black/70 backdrop-blur-sm p-4" onClick={() => setOpen(false)}>
           <div className="glass-strong rounded-3xl p-6 sm:p-8 max-w-md w-full relative" onClick={e => e.stopPropagation()}>
-            <button onClick={() => setOpen(false)} className="absolute top-4 right-4 p-1 rounded-lg hover:bg-white/10">
+            <button onClick={() => setOpen(false)} className="absolute top-4 right-4 p-1 rounded-lg hover:bg-overlay/10">
               <X size={18} />
             </button>
 
@@ -44,10 +44,10 @@ export function CheckinButton({ size = "default" }: { size?: "default" | "small"
                   <div className="absolute inset-x-4 h-0.5 bg-flame shadow-glow" style={{ animation: "scan 1.6s ease-in-out infinite" }} />
                 </div>
                 <p className="mt-5 font-black text-lg">Scanne le QR à l'entrée</p>
-                <p className="text-xs text-white/60 mt-1 flex items-center justify-center gap-1.5">
+                <p className="text-xs text-foreground/60 mt-1 flex items-center justify-center gap-1.5">
                   <MapPin size={12} className="text-flame" /> Entrée principale détectée
                 </p>
-                <p className="text-[11px] text-white/60 mt-3">2 secondes — c'est tout. Tes minutes commencent à compter.</p>
+                <p className="text-[11px] text-foreground/60 mt-3">2 secondes — c'est tout. Tes minutes commencent à compter.</p>
               </div>
             ) : (
               <div className="text-center py-2">
@@ -68,7 +68,7 @@ export function CheckinButton({ size = "default" }: { size?: "default" | "small"
                   <p className="text-[11px] text-muted mt-0.5">La sortie est détectée auto. Pas besoin de re-scanner.</p>
                 </div>
 
-                <button onClick={() => setOpen(false)} className="mt-5 w-full px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 font-bold text-sm">
+                <button onClick={() => setOpen(false)} className="mt-5 w-full px-4 py-2.5 rounded-xl bg-overlay/5 hover:bg-overlay/10 font-bold text-sm">
                   Fermer
                 </button>
               </div>
@@ -88,7 +88,7 @@ export function CheckinButton({ size = "default" }: { size?: "default" | "small"
 
 function Mini({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg bg-white/5 p-2">
+    <div className="rounded-lg bg-overlay/5 p-2">
       <p className="text-[9px] uppercase tracking-wider text-muted">{label}</p>
       <p className="text-sm font-black mt-0.5">{value}</p>
     </div>

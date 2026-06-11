@@ -74,7 +74,7 @@ export default function CoursesPage() {
 
             <div className="mb-4">
               <p className="text-[11px] text-muted mb-1">Taux de remplissage</p>
-              <div className="h-2 rounded-full bg-white/10 overflow-hidden">
+              <div className="h-2 rounded-full bg-overlay/10 overflow-hidden">
                 <div className="h-full flame-gradient" style={{ width: `${(c.bookings / c.capacity) * 100}%` }} />
               </div>
             </div>
@@ -91,7 +91,7 @@ export default function CoursesPage() {
                     className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${
                       c.bonusMultiplier === m
                         ? "flame-gradient text-black shadow-glow"
-                        : "bg-white/5 text-muted hover:bg-white/10 hover:text-white"
+                        : "bg-overlay/5 text-muted hover:bg-overlay/10 hover:text-foreground"
                     }`}
                   >
                     ×{m}
@@ -126,7 +126,7 @@ export default function CoursesPage() {
 
 function Mini({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg bg-white/5 p-2">
+    <div className="rounded-lg bg-overlay/5 p-2">
       <p className="text-[10px] uppercase tracking-wider text-muted">{label}</p>
       <p className="font-bold text-sm mt-0.5">{value}</p>
     </div>

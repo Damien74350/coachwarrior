@@ -67,12 +67,12 @@ export default function ChallengesPage() {
             const sponsor = findSponsor(c.sponsorId)!;
             const cause = findCause(c.causeId)!;
             return (
-              <li key={c.id} className="flex items-center gap-3 rounded-xl bg-white/5 px-3 py-2.5">
+              <li key={c.id} className="flex items-center gap-3 rounded-xl bg-overlay/5 px-3 py-2.5">
                 <div className={`w-8 text-center font-black ${i === 0 ? "text-flame" : "text-muted"}`}>#{i + 1}</div>
                 <div className="flex items-center gap-1 shrink-0">
-                  <div className="w-7 h-7 rounded-md grid place-items-center text-[10px] text-white font-black" style={{ background: sponsor.color }}>{sponsor.logo}</div>
+                  <div className="w-7 h-7 rounded-md grid place-items-center text-[10px] text-foreground font-black" style={{ background: sponsor.color }}>{sponsor.logo}</div>
                   <span className="text-xs text-muted">×</span>
-                  <div className="w-7 h-7 rounded-md grid place-items-center bg-white/10 text-sm">{cause.emoji}</div>
+                  <div className="w-7 h-7 rounded-md grid place-items-center bg-overlay/10 text-sm">{cause.emoji}</div>
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-bold text-sm truncate">{c.city}</p>
@@ -132,7 +132,7 @@ export default function ChallengesPage() {
 
 function HeroStat({ label, value, sub, icon }: { label: string; value: any; sub: string; icon: any }) {
   return (
-    <div className="rounded-2xl bg-black/30 ring-1 ring-white/10 p-4">
+    <div className="rounded-2xl bg-black/30 ring-1 ring-overlay/10 p-4">
       <div className="flex items-center justify-between">
         <p className="text-[10px] uppercase tracking-wider text-muted">{label}</p>
         <span className="text-flame">{icon}</span>

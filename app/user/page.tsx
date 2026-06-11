@@ -68,8 +68,8 @@ export default function UserDashboard() {
             <p className="mt-2 font-black text-xl">
               <span className="flame-text">{ME.streak} jours</span> de régularité. Bravo.
             </p>
-            <p className="text-xs text-white/60">
-              Tu apportes <strong className="text-white">{compact(ME.weekPoints)} pts</strong> à ton club cette semaine.
+            <p className="text-xs text-foreground/60">
+              Tu apportes <strong className="text-foreground">{compact(ME.weekPoints)} pts</strong> à ton club cette semaine.
             </p>
           </div>
         </div>
@@ -104,8 +104,8 @@ export default function UserDashboard() {
         >
           <div className="space-y-2">
             {HEALTH_SOURCES.map(s => (
-              <div key={s.id} className={`flex items-center gap-3 rounded-xl px-3 py-2 ${s.connected ? "bg-success/5 ring-1 ring-success/20" : "bg-white/5"}`}>
-                <div className={`w-8 h-8 rounded-lg grid place-items-center ${s.connected ? "bg-success/20 text-success" : "bg-white/10 text-muted"}`}>
+              <div key={s.id} className={`flex items-center gap-3 rounded-xl px-3 py-2 ${s.connected ? "bg-success/5 ring-1 ring-success/20" : "bg-overlay/5"}`}>
+                <div className={`w-8 h-8 rounded-lg grid place-items-center ${s.connected ? "bg-success/20 text-success" : "bg-overlay/10 text-muted"}`}>
                   {s.connected ? <CheckCircle2 size={16} /> : <Plug size={14} />}
                 </div>
                 <div className="flex-1 min-w-0">
@@ -151,7 +151,7 @@ export default function UserDashboard() {
         >
           <div className="grid sm:grid-cols-3 gap-3">
             {bonusCourses.map(c => (
-              <div key={c.id} className="rounded-xl bg-white/5 p-3 hover:bg-white/10 transition ring-1 ring-flame/30">
+              <div key={c.id} className="rounded-xl bg-overlay/5 p-3 hover:bg-overlay/10 transition ring-1 ring-flame/30">
                 <div className="flex items-start justify-between gap-2">
                   <div>
                     <p className="font-bold text-sm">{c.name}</p>
@@ -170,7 +170,7 @@ export default function UserDashboard() {
         <Card title="Dernières séances">
           <div className="space-y-2">
             {recentSessions.map(s => (
-              <div key={s.id} className="rounded-xl bg-white/5 p-3">
+              <div key={s.id} className="rounded-xl bg-overlay/5 p-3">
                 <div className="flex items-start justify-between gap-2">
                   <div>
                     <p className="font-semibold text-sm">{s.courseName}</p>
@@ -195,7 +195,7 @@ export default function UserDashboard() {
               <span className="font-bold">{tierLabel(ME.tier)}</span>
               <span className="text-muted">→ {next ? tierLabel(next.tier) : "Maxed"}</span>
             </div>
-            <div className="mt-2 h-3 rounded-full bg-white/5 overflow-hidden ring-1 ring-white/10">
+            <div className="mt-2 h-3 rounded-full bg-overlay/5 overflow-hidden ring-1 ring-overlay/10">
               <div className="h-full flame-gradient" style={{ width: `${Math.min(100, tierProgress)}%` }} />
             </div>
             <div className="mt-2 flex justify-between text-[11px] text-muted">
@@ -207,7 +207,7 @@ export default function UserDashboard() {
             {ME.badges.map(b => (
               <span key={b} className="inline-flex items-center gap-1 rounded-full bg-flame/10 ring-1 ring-flame/30 px-3 py-1 text-sm font-semibold text-flame">{b}</span>
             ))}
-            <span className="inline-flex items-center gap-1 rounded-full bg-white/5 ring-1 ring-white/10 px-3 py-1 text-sm font-medium text-muted">
+            <span className="inline-flex items-center gap-1 rounded-full bg-overlay/5 ring-1 ring-overlay/10 px-3 py-1 text-sm font-medium text-muted">
               <Target size={12} /> 6 prochains à débloquer
             </span>
           </div>

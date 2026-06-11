@@ -22,11 +22,11 @@ export function ChallengeBanner() {
             {/* Identity: sponsor × cause */}
             <div className="flex items-center gap-4 lg:w-80 lg:shrink-0">
               <div className="flex items-center gap-2">
-                <div className="w-14 h-14 rounded-2xl grid place-items-center text-white font-black text-lg ring-2 ring-white/20" style={{ background: sponsor.color }}>
+                <div className="w-14 h-14 rounded-2xl grid place-items-center text-foreground font-black text-lg ring-2 ring-overlay/20" style={{ background: sponsor.color }}>
                   {sponsor.logo}
                 </div>
                 <span className="text-2xl font-black text-muted">×</span>
-                <div className="w-14 h-14 rounded-2xl grid place-items-center text-2xl ring-2 ring-white/20 bg-white/10">
+                <div className="w-14 h-14 rounded-2xl grid place-items-center text-2xl ring-2 ring-overlay/20 bg-overlay/10">
                   {cause.emoji}
                 </div>
               </div>
@@ -43,9 +43,9 @@ export function ChallengeBanner() {
             {/* Goal + gauge */}
             <div className="flex-1">
               <p className="text-sm text-muted">
-                Si {c.city} atteint <strong className="text-white">{compact(c.targetMinutes)} minutes</strong> ce mois,{" "}
+                Si {c.city} atteint <strong className="text-foreground">{compact(c.targetMinutes)} minutes</strong> ce mois,{" "}
                 <span className="font-black flame-text">{c.donationAmount.toLocaleString("fr-FR")} {c.donationCurrency}</span>{" "}
-                seront reversés à <strong className="text-white">{cause.name}</strong>.
+                seront reversés à <strong className="text-foreground">{cause.name}</strong>.
               </p>
 
               <div className="mt-4">
@@ -53,11 +53,11 @@ export function ChallengeBanner() {
                   <span className="font-black text-2xl flame-text">{compact(c.currentMinutes)}<span className="text-muted text-base font-normal"> / {compact(c.targetMinutes)} min</span></span>
                   <span className="font-bold text-flame">{progress.toFixed(1)}%</span>
                 </div>
-                <div className="h-3 rounded-full bg-black/40 overflow-hidden ring-1 ring-white/10">
+                <div className="h-3 rounded-full bg-black/40 overflow-hidden ring-1 ring-overlay/10">
                   <div className="h-full flame-gradient transition-all" style={{ width: `${progress}%` }} />
                 </div>
                 <div className="mt-2 flex items-center justify-between text-[11px] text-muted">
-                  <span>Encore <strong className="text-white">{compact(remaining)} min</strong> à débloquer</span>
+                  <span>Encore <strong className="text-foreground">{compact(remaining)} min</strong> à débloquer</span>
                   <span className="inline-flex items-center gap-1"><Clock size={11} /> {daysLeft}j restants</span>
                 </div>
               </div>

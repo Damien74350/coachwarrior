@@ -19,15 +19,15 @@ export function ChallengeCard({ challenge, compactMode = false }: { challenge: S
   })();
 
   return (
-    <div className="glass rounded-2xl p-5 ring-1 ring-white/10 hover:ring-flame/40 transition">
+    <div className="glass rounded-2xl p-5 ring-1 ring-overlay/10 hover:ring-flame/40 transition">
       {/* Sponsor × Cause header */}
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-2">
-          <div className="w-11 h-11 rounded-xl grid place-items-center text-white font-black ring-1 ring-white/20" style={{ background: sponsor.color }}>
+          <div className="w-11 h-11 rounded-xl grid place-items-center text-foreground font-black ring-1 ring-overlay/20" style={{ background: sponsor.color }}>
             {sponsor.logo}
           </div>
           <span className="text-lg font-black text-muted">×</span>
-          <div className="w-11 h-11 rounded-xl grid place-items-center text-xl ring-1 ring-white/20 bg-white/10">
+          <div className="w-11 h-11 rounded-xl grid place-items-center text-xl ring-1 ring-overlay/20 bg-overlay/10">
             {cause.emoji}
           </div>
         </div>
@@ -60,7 +60,7 @@ export function ChallengeCard({ challenge, compactMode = false }: { challenge: S
           <span className="font-bold">{compact(challenge.currentMinutes)} <span className="text-muted">/ {compact(challenge.targetMinutes)} min</span></span>
           <span className={`font-bold ${overshoot ? "text-success" : "text-flame"}`}>{progress.toFixed(1)}%</span>
         </div>
-        <div className="h-2.5 rounded-full bg-black/40 overflow-hidden ring-1 ring-white/10">
+        <div className="h-2.5 rounded-full bg-black/40 overflow-hidden ring-1 ring-overlay/10">
           <div className={`h-full ${challenge.status === "missed" ? "bg-muted/60" : overshoot ? "bg-success" : "flame-gradient"}`} style={{ width: `${progress}%` }} />
         </div>
       </div>

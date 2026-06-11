@@ -62,7 +62,7 @@ export default function AutomationsPage() {
             >
               <div className="space-y-3">
                 {list.map(r => (
-                  <div key={r.id} className={`rounded-xl p-4 ring-1 transition ${r.enabled ? "bg-flame/5 ring-flame/30" : "bg-white/5 ring-white/10"}`}>
+                  <div key={r.id} className={`rounded-xl p-4 ring-1 transition ${r.enabled ? "bg-flame/5 ring-flame/30" : "bg-overlay/5 ring-overlay/10"}`}>
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
@@ -75,18 +75,18 @@ export default function AutomationsPage() {
                     </div>
 
                     <div className="mt-3 grid sm:grid-cols-2 gap-2 text-[11px]">
-                      <div className="rounded-lg bg-white/5 p-2">
+                      <div className="rounded-lg bg-overlay/5 p-2">
                         <p className="text-muted uppercase tracking-wider text-[9px]">Déclencheur</p>
                         <p className="mt-0.5">{r.trigger}</p>
                       </div>
-                      <div className="rounded-lg bg-white/5 p-2">
+                      <div className="rounded-lg bg-overlay/5 p-2">
                         <p className="text-muted uppercase tracking-wider text-[9px]">Action</p>
                         <p className="mt-0.5">{r.action}</p>
                       </div>
                     </div>
 
                     <div className="mt-3 flex items-center justify-between text-[11px]">
-                      <span className="text-muted">Déclenché <strong className="text-white">{r.firedThisMonth}×</strong> ce mois</span>
+                      <span className="text-muted">Déclenché <strong className="text-foreground">{r.firedThisMonth}×</strong> ce mois</span>
                       {r.impact && (
                         <span className="text-flame font-bold">↗ {r.impact}</span>
                       )}
@@ -106,7 +106,7 @@ export default function AutomationsPage() {
             { title: "Les bonnes décisions sont prévisibles", text: "Boost les créneaux creux, sauve les inactifs, fête les seuils. On les a codifiées une fois pour toutes." },
             { title: "Tout est ajustable", text: "Chaque règle a un on/off. Tu peux désactiver, créer la tienne, ou laisser le bot tout gérer." },
           ].map(o => (
-            <div key={o.title} className="rounded-xl bg-white/5 p-4">
+            <div key={o.title} className="rounded-xl bg-overlay/5 p-4">
               <p className="font-bold">{o.title}</p>
               <p className="text-xs text-muted mt-1">{o.text}</p>
             </div>
@@ -121,7 +121,7 @@ function Toggle({ on, onClick }: { on: boolean; onClick: () => void }) {
   return (
     <button
       onClick={onClick}
-      className={`relative w-10 h-6 rounded-full transition shrink-0 ${on ? "bg-flame" : "bg-white/10"}`}
+      className={`relative w-10 h-6 rounded-full transition shrink-0 ${on ? "bg-flame" : "bg-overlay/10"}`}
       aria-label="toggle"
     >
       <span

@@ -75,7 +75,7 @@ export function Pill({
     cyan: "bg-cyan/15 text-cyan ring-cyan/30",
     plasma: "bg-plasma/15 text-plasma ring-plasma/30",
     success: "bg-success/15 text-success ring-success/30",
-    muted: "bg-white/5 text-muted ring-white/10",
+    muted: "bg-overlay/5 text-muted ring-overlay/10",
   };
   return (
     <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ring-1 ${map[color]}`}>

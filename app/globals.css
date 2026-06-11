@@ -2,40 +2,134 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ───── THÈMES — Aurora est le nouveau défaut, accessible à tous ───── */
-:root, [data-theme="aurora"] {
+/* ────────────────────────────────────────────────────────────
+   THÈMES — 3 LIGHT (Nike / Apple-like) + 6 DARK (gaming-ready)
+   Toutes les classes text-foreground, text-muted, bg-overlay/X
+   sont pilotées par --c-fg, --c-muted, --c-overlay
+   ──────────────────────────────────────────────────────────── */
+
+/* ───────── LIGHT THEMES ───────── */
+
+:root, [data-theme="apple"] {
+  /* Apple Fitness+ — warm cream + coral/amber/mint accents */
+  --bg-base: #faf7f2;
+  --bg-glow-1: rgba(251, 113, 133, 0.10);
+  --bg-glow-2: rgba(251, 146, 60, 0.08);
+  --bg-glow-3: rgba(94, 234, 212, 0.07);
+  --c-fg: 28 25 23;            /* stone-900 */
+  --c-muted: 120 113 108;      /* stone-500 */
+  --c-overlay: 0 0 0;          /* lift = black at low opacity */
+  --c-surface: 255 255 255;    /* white cards */
+  --c-border: 231 229 228;     /* stone-200 */
+  --c-war: 244 63 94;          /* rose-500 vibrant */
+  --c-flame: 249 115 22;       /* orange-500 */
+  --c-gold: 234 179 8;         /* amber-500 */
+  --c-cyan: 13 148 136;        /* teal-600 */
+  --c-plasma: 139 92 246;      /* violet-500 */
+  --c-glow: rgba(244, 63, 94, 0.18);
+  --c-glow-flame: rgba(249, 115, 22, 0.16);
+  --grad: linear-gradient(135deg, rgb(244 63 94) 0%, rgb(249 115 22) 55%, rgb(234 179 8) 100%);
+  --is-light: 1;
+}
+
+[data-theme="nike"] {
+  /* Nike Run Club — off-white + black + volt green */
+  --bg-base: #fafaf9;
+  --bg-glow-1: rgba(0, 0, 0, 0.04);
+  --bg-glow-2: rgba(204, 255, 0, 0.10);
+  --bg-glow-3: rgba(255, 0, 80, 0.06);
+  --c-fg: 10 10 10;
+  --c-muted: 82 82 82;
+  --c-overlay: 0 0 0;
+  --c-surface: 255 255 255;
+  --c-border: 229 229 229;
+  --c-war: 255 0 80;           /* Nike hot pink */
+  --c-flame: 10 10 10;         /* black-as-accent — Nike signature */
+  --c-gold: 204 255 0;         /* volt green */
+  --c-cyan: 25 153 219;
+  --c-plasma: 89 95 255;
+  --c-glow: rgba(0, 0, 0, 0.10);
+  --c-glow-flame: rgba(204, 255, 0, 0.30);
+  --grad: linear-gradient(135deg, rgb(10 10 10) 0%, rgb(10 10 10) 60%, rgb(204 255 0) 100%);
+  --is-light: 1;
+}
+
+[data-theme="studio"] {
+  /* Boutique wellness — sand + sage + terracotta */
+  --bg-base: #f5f1ec;
+  --bg-glow-1: rgba(178, 119, 92, 0.10);
+  --bg-glow-2: rgba(132, 153, 124, 0.10);
+  --bg-glow-3: rgba(212, 165, 116, 0.08);
+  --c-fg: 56 46 43;
+  --c-muted: 120 100 92;
+  --c-overlay: 56 46 43;
+  --c-surface: 252 249 246;
+  --c-border: 226 215 203;
+  --c-war: 178 119 92;         /* terracotta */
+  --c-flame: 197 147 86;       /* terracotta lighter */
+  --c-gold: 212 165 116;       /* sand */
+  --c-cyan: 132 153 124;       /* sage */
+  --c-plasma: 167 132 162;     /* dusty rose */
+  --c-glow: rgba(178, 119, 92, 0.18);
+  --c-glow-flame: rgba(212, 165, 116, 0.16);
+  --grad: linear-gradient(135deg, rgb(178 119 92) 0%, rgb(197 147 86) 55%, rgb(212 165 116) 100%);
+  --is-light: 1;
+}
+
+/* ───────── DARK THEMES ───────── */
+
+[data-theme="aurora"] {
   --bg-base: #0d0c12;
   --bg-glow-1: rgba(251, 146, 124, 0.16);
   --bg-glow-2: rgba(252, 211, 124, 0.12);
   --bg-glow-3: rgba(94, 234, 212, 0.10);
-  --c-war: 251 113 133;      /* coral rose, énergique sans agressif */
-  --c-flame: 251 146 60;      /* ambre solaire */
-  --c-gold: 252 211 77;       /* miel chaud */
-  --c-cyan: 94 234 212;       /* menthe douce */
-  --c-plasma: 167 139 250;    /* lavande */
+  --c-fg: 231 229 235;
+  --c-muted: 156 163 175;
+  --c-overlay: 255 255 255;
+  --c-surface: 28 26 36;
+  --c-border: 42 38 56;
+  --c-war: 251 113 133;
+  --c-flame: 251 146 60;
+  --c-gold: 252 211 77;
+  --c-cyan: 94 234 212;
+  --c-plasma: 167 139 250;
   --c-glow: rgba(251, 113, 133, 0.22);
   --c-glow-flame: rgba(251, 146, 60, 0.20);
   --grad: linear-gradient(135deg, rgb(251 113 133) 0%, rgb(251 146 60) 55%, rgb(252 211 77) 100%);
+  --is-light: 0;
 }
+
 [data-theme="pastel"] {
   --bg-base: #14111a;
   --bg-glow-1: rgba(244, 182, 230, 0.18);
   --bg-glow-2: rgba(186, 230, 253, 0.14);
   --bg-glow-3: rgba(187, 247, 208, 0.10);
-  --c-war: 244 182 230;       /* rose pastel */
-  --c-flame: 253 186 116;     /* pêche pastel */
-  --c-gold: 253 224 71;       /* jaune doux */
-  --c-cyan: 134 239 172;      /* menthe pastel */
-  --c-plasma: 196 181 253;    /* lavande pastel */
+  --c-fg: 231 229 235;
+  --c-muted: 156 163 175;
+  --c-overlay: 255 255 255;
+  --c-surface: 28 22 40;
+  --c-border: 56 46 70;
+  --c-war: 244 182 230;
+  --c-flame: 253 186 116;
+  --c-gold: 253 224 71;
+  --c-cyan: 134 239 172;
+  --c-plasma: 196 181 253;
   --c-glow: rgba(244, 182, 230, 0.30);
   --c-glow-flame: rgba(253, 186, 116, 0.28);
   --grad: linear-gradient(135deg, rgb(244 182 230) 0%, rgb(253 186 116) 50%, rgb(134 239 172) 100%);
+  --is-light: 0;
 }
+
 [data-theme="crimson"] {
   --bg-base: #0a0a0f;
   --bg-glow-1: rgba(255, 59, 48, 0.18);
   --bg-glow-2: rgba(255, 122, 24, 0.12);
   --bg-glow-3: rgba(124, 92, 255, 0.10);
+  --c-fg: 229 231 235;
+  --c-muted: 156 163 175;
+  --c-overlay: 255 255 255;
+  --c-surface: 28 28 38;
+  --c-border: 42 42 56;
   --c-war: 255 59 48;
   --c-flame: 255 122 24;
   --c-gold: 255 200 61;
@@ -44,12 +138,19 @@
   --c-glow: rgba(255, 59, 48, 0.25);
   --c-glow-flame: rgba(255, 122, 24, 0.25);
   --grad: linear-gradient(135deg, rgb(255 59 48) 0%, rgb(255 122 24) 50%, rgb(255 200 61) 100%);
+  --is-light: 0;
 }
+
 [data-theme="midnight"] {
   --bg-base: #070b14;
   --bg-glow-1: rgba(34, 211, 238, 0.18);
   --bg-glow-2: rgba(124, 92, 255, 0.14);
   --bg-glow-3: rgba(59, 130, 246, 0.10);
+  --c-fg: 229 231 235;
+  --c-muted: 156 163 175;
+  --c-overlay: 255 255 255;
+  --c-surface: 18 24 38;
+  --c-border: 40 50 72;
   --c-war: 34 211 238;
   --c-flame: 124 92 255;
   --c-gold: 59 130 246;
@@ -58,12 +159,19 @@
   --c-glow: rgba(34, 211, 238, 0.30);
   --c-glow-flame: rgba(124, 92, 255, 0.30);
   --grad: linear-gradient(135deg, rgb(34 211 238) 0%, rgb(124 92 255) 60%, rgb(59 130 246) 100%);
+  --is-light: 0;
 }
+
 [data-theme="swissgold"] {
   --bg-base: #0b0a08;
   --bg-glow-1: rgba(212, 164, 55, 0.22);
   --bg-glow-2: rgba(184, 133, 52, 0.14);
   --bg-glow-3: rgba(243, 210, 122, 0.08);
+  --c-fg: 235 230 215;
+  --c-muted: 168 158 132;
+  --c-overlay: 255 255 255;
+  --c-surface: 28 24 18;
+  --c-border: 56 46 30;
   --c-war: 212 164 55;
   --c-flame: 184 133 52;
   --c-gold: 243 210 122;
@@ -72,12 +180,19 @@
   --c-glow: rgba(212, 164, 55, 0.30);
   --c-glow-flame: rgba(243, 210, 122, 0.25);
   --grad: linear-gradient(135deg, rgb(212 164 55) 0%, rgb(184 133 52) 55%, rgb(243 210 122) 100%);
+  --is-light: 0;
 }
+
 [data-theme="spartan"] {
   --bg-base: #070d0a;
   --bg-glow-1: rgba(16, 185, 129, 0.22);
   --bg-glow-2: rgba(132, 204, 22, 0.12);
   --bg-glow-3: rgba(34, 211, 238, 0.10);
+  --c-fg: 229 231 235;
+  --c-muted: 156 163 175;
+  --c-overlay: 255 255 255;
+  --c-surface: 18 30 24;
+  --c-border: 30 50 38;
   --c-war: 16 185 129;
   --c-flame: 132 204 22;
   --c-gold: 34 211 238;
@@ -86,7 +201,10 @@
   --c-glow: rgba(16, 185, 129, 0.30);
   --c-glow-flame: rgba(132, 204, 22, 0.25);
   --grad: linear-gradient(135deg, rgb(16 185 129) 0%, rgb(132 204 22) 60%, rgb(34 211 238) 100%);
+  --is-light: 0;
 }
+
+/* ───────── BASE ───────── */
 
 html, body { height: 100%; }
 body {
@@ -95,19 +213,19 @@ body {
     radial-gradient(900px 500px at -10% 30%, var(--bg-glow-2), transparent 60%),
     radial-gradient(600px 400px at 50% 110%, var(--bg-glow-3), transparent 60%),
     var(--bg-base);
-  color: #e7e5eb;
+  color: rgb(var(--c-fg));
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
-  transition: background 0.4s ease;
+  transition: background 0.4s ease, color 0.2s ease;
 }
 
 .glass {
-  background: linear-gradient(180deg, rgba(38, 32, 44, 0.55), rgba(26, 22, 30, 0.55));
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(180deg, rgb(var(--c-surface) / 0.72), rgb(var(--c-surface) / 0.72));
+  border: 1px solid rgb(var(--c-border) / 0.7);
   backdrop-filter: blur(10px);
 }
 .glass-strong {
-  background: linear-gradient(180deg, rgba(38, 32, 44, 0.78), rgba(26, 22, 30, 0.78));
-  border: 1px solid rgba(255, 255, 255, 0.10);
+  background: linear-gradient(180deg, rgb(var(--c-surface) / 0.92), rgb(var(--c-surface) / 0.92));
+  border: 1px solid rgb(var(--c-border) / 0.8);
   backdrop-filter: blur(14px);
 }
 
@@ -124,10 +242,10 @@ body {
 
 .scrollbar-thin::-webkit-scrollbar { width: 8px; height: 8px; }
 .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
-.scrollbar-thin::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+.scrollbar-thin::-webkit-scrollbar-thumb { background: rgb(var(--c-overlay) / 0.15); border-radius: 4px; }
 
 .skeleton {
-  background: linear-gradient(90deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.04) 100%);
+  background: linear-gradient(90deg, rgb(var(--c-overlay) / 0.04) 0%, rgb(var(--c-overlay) / 0.10) 50%, rgb(var(--c-overlay) / 0.04) 100%);
   background-size: 200% 100%;
   animation: shimmer 1.4s infinite;
 }
@@ -149,6 +267,6 @@ body {
 .floaty { animation: floaty 6s ease-in-out infinite; }
 
 .grain {
-  background-image: radial-gradient(rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-image: radial-gradient(rgb(var(--c-overlay) / 0.02) 1px, transparent 1px);
   background-size: 3px 3px;
 }

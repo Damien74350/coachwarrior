@@ -52,15 +52,15 @@ export default function CoachesPage() {
             <p className="mt-4 text-sm text-muted leading-relaxed">{c.bio}</p>
 
             <div className="mt-4 grid grid-cols-3 gap-2 text-center">
-              <div className="rounded-lg bg-white/5 p-2">
+              <div className="rounded-lg bg-overlay/5 p-2">
                 <p className="text-[10px] uppercase text-muted">Followers</p>
                 <p className="font-bold mt-0.5">{c.followers}</p>
               </div>
-              <div className="rounded-lg bg-white/5 p-2">
+              <div className="rounded-lg bg-overlay/5 p-2">
                 <p className="text-[10px] uppercase text-muted">Séances</p>
                 <p className="font-bold mt-0.5">{c.sessions}</p>
               </div>
-              <div className="rounded-lg bg-white/5 p-2">
+              <div className="rounded-lg bg-overlay/5 p-2">
                 <p className="text-[10px] uppercase text-muted">Rating</p>
                 <p className="font-bold mt-0.5">{c.rating.toFixed(1)}</p>
               </div>
@@ -77,7 +77,7 @@ export default function CoachesPage() {
             )}
 
             <div className="mt-4 flex gap-2">
-              <button className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-xs font-bold">
+              <button className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-overlay/5 hover:bg-overlay/10 text-xs font-bold">
                 Profil public
               </button>
               <button className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-war/15 text-war ring-1 ring-war/30 text-xs font-bold">

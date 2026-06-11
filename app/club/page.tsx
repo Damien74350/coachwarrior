@@ -71,10 +71,10 @@ export default function ClubDashboard() {
                 <Pill color="success"><CheckCircle2 size={10} className="mr-1" />En route</Pill>
               </div>
               <p className="text-sm text-muted mt-0.5">
-                <strong className="text-white">{auto.enabled} règles</strong> sur {auto.total} actives ·{" "}
+                <strong className="text-foreground">{auto.enabled} règles</strong> sur {auto.total} actives ·{" "}
                 <strong className="text-flame">{auto.monthly} actions automatiques</strong> ce mois-ci.
               </p>
-              <p className="text-xs text-muted mt-1">Tu n'as <strong className="text-white">rien à activer manuellement</strong>. Le bot gère bonus, ligues, sauvetage à risque.</p>
+              <p className="text-xs text-muted mt-1">Tu n'as <strong className="text-foreground">rien à activer manuellement</strong>. Le bot gère bonus, ligues, sauvetage à risque.</p>
             </div>
           </div>
           <Link href="/club/automations" className="text-xs font-bold text-flame hover:underline whitespace-nowrap inline-flex items-center gap-1">
@@ -87,7 +87,7 @@ export default function ClubDashboard() {
       <Card title="Actions suggérées par l'autopilot" subtitle="1 clic. Le bot fait le reste." right={<Pill color="flame">{AUTO_SUGGESTIONS.length} idées</Pill>}>
         <div className="grid sm:grid-cols-2 gap-3">
           {AUTO_SUGGESTIONS.map(s => (
-            <div key={s.id} className="rounded-xl bg-white/5 ring-1 ring-white/10 p-4 hover:ring-flame/40 transition">
+            <div key={s.id} className="rounded-xl bg-overlay/5 ring-1 ring-overlay/10 p-4 hover:ring-flame/40 transition">
               <div className="flex items-start justify-between gap-2">
                 <Pill color={SEV_COLOR[s.severity]}>
                   {s.severity === "warn" && <AlertTriangle size={10} className="mr-1" />}
@@ -132,7 +132,7 @@ export default function ClubDashboard() {
         >
           <div className="grid sm:grid-cols-2 gap-3">
             {bonusCourses.map((c, i) => (
-              <div key={c.id} className="rounded-xl bg-white/5 p-3 ring-1 ring-white/10 hover:ring-flame/40 transition">
+              <div key={c.id} className="rounded-xl bg-overlay/5 p-3 ring-1 ring-overlay/10 hover:ring-flame/40 transition">
                 <div className="flex items-start justify-between">
                   <div>
                     <p className="font-bold">{c.name}</p>
@@ -167,10 +167,10 @@ export default function ClubDashboard() {
           ].map(o => {
             const pct = Math.min(100, (o.current / o.target) * 100);
             return (
-              <div key={o.label} className="rounded-xl bg-white/5 p-4">
+              <div key={o.label} className="rounded-xl bg-overlay/5 p-4">
                 <p className="text-xs uppercase tracking-wider text-muted">{o.label}</p>
                 <p className="mt-1 text-2xl font-black">{Math.round(o.current)}<span className="text-muted text-sm">{o.suffix} / {o.target}{o.suffix}</span></p>
-                <div className="mt-3 h-2 rounded-full bg-white/10 overflow-hidden">
+                <div className="mt-3 h-2 rounded-full bg-overlay/10 overflow-hidden">
                   <div className="h-full flame-gradient" style={{ width: `${pct}%` }} />
                 </div>
                 <p className="mt-1 text-[11px] text-muted">{pct.toFixed(0)}% atteint</p>

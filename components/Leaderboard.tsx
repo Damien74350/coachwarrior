@@ -25,13 +25,13 @@ export function Leaderboard({
           <div
             key={u.id}
             className={`flex items-center gap-3 rounded-xl px-3 py-2.5 transition ${
-              me ? "bg-war/10 ring-1 ring-war/30" : "bg-white/5 hover:bg-white/10"
+              me ? "bg-war/10 ring-1 ring-war/30" : "bg-overlay/5 hover:bg-overlay/10"
             }`}
           >
             <div className={`w-8 text-center font-black ${podium ? "text-flame" : "text-muted"}`}>
               {podium ? <Crown size={16} className="inline -mt-1" /> : null} #{rank}
             </div>
-            <div className="grid place-items-center w-9 h-9 rounded-lg bg-white/10 font-bold text-xs">
+            <div className="grid place-items-center w-9 h-9 rounded-lg bg-overlay/10 font-bold text-xs">
               {u.avatar}
             </div>
             <div className="flex-1 min-w-0">

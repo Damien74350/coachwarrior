@@ -45,12 +45,12 @@ export default function AnalyticsPage() {
           {courses.map(c => {
             const pct = (c.bookings / c.capacity) * 100;
             return (
-              <div key={c.name} className="rounded-xl bg-white/5 p-3">
+              <div key={c.name} className="rounded-xl bg-overlay/5 p-3">
                 <div className="flex items-center justify-between text-sm">
                   <span className="font-semibold">{c.name}</span>
                   <span className="text-muted text-xs">{c.bookings}/{c.capacity} <span className="font-bold text-flame">{pct.toFixed(0)}%</span></span>
                 </div>
-                <div className="mt-2 h-2 rounded-full bg-white/10 overflow-hidden">
+                <div className="mt-2 h-2 rounded-full bg-overlay/10 overflow-hidden">
                   <div className={`h-full ${pct >= 90 ? "bg-success" : pct >= 60 ? "flame-gradient" : "bg-muted"}`} style={{ width: `${pct}%` }} />
                 </div>
               </div>
@@ -116,14 +116,14 @@ function Compare({ label, std, bonus, suffix = "%" }: { label: string; std: numb
       <div className="grid grid-cols-2 gap-2">
         <div>
           <p className="text-[10px] uppercase text-muted">Standard</p>
-          <div className="h-2 rounded-full bg-white/10 overflow-hidden mt-1">
+          <div className="h-2 rounded-full bg-overlay/10 overflow-hidden mt-1">
             <div className="h-full bg-muted" style={{ width: `${(std / Math.max(std, bonus)) * 100}%` }} />
           </div>
           <p className="text-xs font-bold mt-1">{std}{suffix}</p>
         </div>
         <div>
           <p className="text-[10px] uppercase text-flame font-bold">Bonus</p>
-          <div className="h-2 rounded-full bg-white/10 overflow-hidden mt-1">
+          <div className="h-2 rounded-full bg-overlay/10 overflow-hidden mt-1">
             <div className="h-full flame-gradient" style={{ width: `${(bonus / Math.max(std, bonus)) * 100}%` }} />
           </div>
           <p className="text-xs font-bold mt-1 text-flame">{bonus}{suffix}</p>

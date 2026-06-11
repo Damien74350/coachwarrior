@@ -64,11 +64,11 @@ export default function LeaguesPage() {
                 {l.standings.slice(0, 6).map(s => {
                   const podium = s.rank <= 3;
                   return (
-                    <li key={s.rank} className="flex items-center gap-3 rounded-lg bg-white/5 px-3 py-2">
+                    <li key={s.rank} className="flex items-center gap-3 rounded-lg bg-overlay/5 px-3 py-2">
                       <div className={`w-8 text-center font-black ${podium ? "text-flame" : "text-muted"}`}>
                         {podium ? <Crown size={14} className="inline -mt-1" /> : null} #{s.rank}
                       </div>
-                      <div className="grid place-items-center w-9 h-9 rounded-lg bg-white/10 font-bold text-xs">
+                      <div className="grid place-items-center w-9 h-9 rounded-lg bg-overlay/10 font-bold text-xs">
                         {s.avatar}
                       </div>
                       <div className="flex-1 min-w-0">
@@ -107,7 +107,7 @@ export default function LeaguesPage() {
             { title: "Newcomers League", desc: "Réservée aux membres < 90j. Engagement précoce ×2.", color: "gold" as const },
             { title: "Marathon des cours", desc: "Plus tu testes de cours différents, plus tu marques.", color: "success" as const },
           ].map(t => (
-            <div key={t.title} className="rounded-xl bg-white/5 p-4 hover:bg-white/10 transition">
+            <div key={t.title} className="rounded-xl bg-overlay/5 p-4 hover:bg-overlay/10 transition">
               <Pill color={t.color}>Template</Pill>
               <h4 className="mt-2 font-bold">{t.title}</h4>
               <p className="mt-1 text-xs text-muted">{t.desc}</p>

@@ -34,8 +34,8 @@ export default function ProfilePage() {
                 <Pill color="flame"><Flame size={11} className="mr-1" />Streak {ME.streak}j</Pill>
               </div>
               <p className="mt-3 text-sm text-muted">
-                Athlète déterminé. La régularité est ton arme. Tu cumules <strong className="text-white">{compact(ME.totalPoints)} pts</strong> à vie,
-                soit <strong className="text-white">{minutesToHm(ME.totalMinutes)}</strong> d'effort réel.
+                Athlète déterminé. La régularité est ton arme. Tu cumules <strong className="text-foreground">{compact(ME.totalPoints)} pts</strong> à vie,
+                soit <strong className="text-foreground">{minutesToHm(ME.totalMinutes)}</strong> d'effort réel.
               </p>
               <div className="mt-4 flex flex-wrap gap-2">
                 {ME.badges.map(b => (
@@ -62,7 +62,7 @@ export default function ProfilePage() {
       <Card title={`Coachs de ${MY_CLUB.name}`} subtitle="Ta team de combat" right={<Link href="/club/coaches" className="text-xs text-flame font-bold hover:underline">Voir tous</Link>}>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {COACHES.slice(0, 3).map(c => (
-            <div key={c.id} className="rounded-xl bg-white/5 p-4 hover:bg-white/10 transition">
+            <div key={c.id} className="rounded-xl bg-overlay/5 p-4 hover:bg-overlay/10 transition">
               <div className="flex items-center gap-3">
                 <div className="grid place-items-center w-12 h-12 rounded-xl bg-flame/20 text-flame font-black">
                   {c.avatar}
@@ -80,7 +80,7 @@ export default function ProfilePage() {
               {c.badges.length > 0 && (
                 <div className="mt-3 flex flex-wrap gap-1.5">
                   {c.badges.map(b => (
-                    <span key={b} className="text-[10px] rounded-full bg-white/5 ring-1 ring-white/10 px-2 py-0.5">{b}</span>
+                    <span key={b} className="text-[10px] rounded-full bg-overlay/5 ring-1 ring-overlay/10 px-2 py-0.5">{b}</span>
                   ))}
                 </div>
               )}
@@ -97,7 +97,7 @@ export default function ProfilePage() {
             "Afficher mon nom dans les classements publics",
             "Recevoir le récap hebdo par email",
           ].map(t => (
-            <label key={t} className="flex items-center gap-3 rounded-xl bg-white/5 p-3 ring-1 ring-white/10 cursor-pointer hover:bg-white/10">
+            <label key={t} className="flex items-center gap-3 rounded-xl bg-overlay/5 p-3 ring-1 ring-overlay/10 cursor-pointer hover:bg-overlay/10">
               <input type="checkbox" defaultChecked className="accent-war w-4 h-4" />
               <span>{t}</span>
             </label>

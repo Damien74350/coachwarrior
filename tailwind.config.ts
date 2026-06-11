@@ -5,23 +5,25 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: "#0a0a0f",
-        surface: "#13131a",
-        surfaceAlt: "#1c1c26",
-        border: "#2a2a38",
         // Theme-driven (resolved via CSS vars in globals.css)
+        foreground: "rgb(var(--c-fg) / <alpha-value>)",
+        overlay: "rgb(var(--c-overlay) / <alpha-value>)",
+        surface: "rgb(var(--c-surface) / <alpha-value>)",
+        border: "rgb(var(--c-border) / <alpha-value>)",
+        muted: "rgb(var(--c-muted) / <alpha-value>)",
         war: "rgb(var(--c-war) / <alpha-value>)",
         flame: "rgb(var(--c-flame) / <alpha-value>)",
         gold: "rgb(var(--c-gold) / <alpha-value>)",
         cyan: "rgb(var(--c-cyan) / <alpha-value>)",
         plasma: "rgb(var(--c-plasma) / <alpha-value>)",
+        accent: "rgb(var(--c-war) / <alpha-value>)",
+        accent2: "rgb(var(--c-flame) / <alpha-value>)",
+        // Fixed semantic colors
+        background: "var(--bg-base)",
         warDark: "#b8261f",
         success: "#22c55e",
         warning: "#f59e0b",
         danger: "#ef4444",
-        muted: "#9ca3af",
-        accent: "rgb(var(--c-war) / <alpha-value>)",
-        accent2: "rgb(var(--c-flame) / <alpha-value>)",
       },
       fontFamily: {
         sans: ["ui-sans-serif", "system-ui", "-apple-system", "Segoe UI", "Roboto", "Inter", "sans-serif"],
