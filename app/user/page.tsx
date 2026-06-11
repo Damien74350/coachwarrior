@@ -59,17 +59,17 @@ export default function UserDashboard() {
           </div>
           <div>
             <div className="flex flex-wrap items-center gap-2">
-              <Pill color="flame">Salut, {ME.name.split(" ")[0]} ⚔️</Pill>
+              <Pill color="flame">Salut {ME.name.split(" ")[0]} 👋</Pill>
               <span className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-bold ring-1 ${tierBg(ME.tier)}`}>
                 Tier {tierLabel(ME.tier)}
               </span>
               <SeasonBadge compact />
             </div>
             <p className="mt-2 font-black text-xl">
-              <span className="flame-text">{ME.streak} jours</span> de streak. Continue.
+              <span className="flame-text">{ME.streak} jours</span> de régularité. Bravo.
             </p>
-            <p className="text-xs text-muted">
-              Tu contribues <strong className="text-white">{compact(ME.weekPoints)} pts</strong> au score du club cette semaine.
+            <p className="text-xs text-white/60">
+              Tu apportes <strong className="text-white">{compact(ME.weekPoints)} pts</strong> à ton club cette semaine.
             </p>
           </div>
         </div>

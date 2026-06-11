@@ -3,17 +3,19 @@
 import { useEffect, useState } from "react";
 import { Palette, Check } from "lucide-react";
 
-export type Theme = "crimson" | "midnight" | "swissgold" | "spartan";
+export type Theme = "aurora" | "pastel" | "crimson" | "midnight" | "swissgold" | "spartan";
 
 export const THEMES: { id: Theme; name: string; tagline: string; swatches: string[] }[] = [
-  { id: "crimson",   name: "Crimson Combat",  tagline: "Guerrier, brûlant",        swatches: ["#0a0a0f", "#ff3b30", "#ff7a18", "#ffc83d"] },
-  { id: "midnight",  name: "Nuit Tactique",   tagline: "Premium, militaire",       swatches: ["#070b14", "#22d3ee", "#7c5cff", "#3b82f6"] },
-  { id: "swissgold", name: "Or Suisse",       tagline: "Luxe, sponsor-ready",      swatches: ["#0b0a08", "#d4a437", "#b88534", "#f3d27a"] },
-  { id: "spartan",   name: "Vert Spartan",    tagline: "Santé, naturel, urbain",   swatches: ["#070d0a", "#10b981", "#84cc16", "#22d3ee"] },
+  { id: "aurora",    name: "Aurora",         tagline: "Chaleureux, inclusif — défaut",  swatches: ["#0d0c12", "#fb7185", "#fb923c", "#fcd34d"] },
+  { id: "pastel",    name: "Pastel Doux",    tagline: "Apaisant, accessible à tous",    swatches: ["#14111a", "#f4b6e6", "#fdba74", "#86efac"] },
+  { id: "crimson",   name: "Crimson Combat", tagline: "Brûlant — pour les guerriers",   swatches: ["#0a0a0f", "#ff3b30", "#ff7a18", "#ffc83d"] },
+  { id: "midnight",  name: "Nuit Tactique",  tagline: "Premium, urbain",                swatches: ["#070b14", "#22d3ee", "#7c5cff", "#3b82f6"] },
+  { id: "swissgold", name: "Or Suisse",      tagline: "Luxe, sponsor-ready",            swatches: ["#0b0a08", "#d4a437", "#b88534", "#f3d27a"] },
+  { id: "spartan",   name: "Vert Spartan",   tagline: "Santé, naturel",                 swatches: ["#070d0a", "#10b981", "#84cc16", "#22d3ee"] },
 ];
 
 export function ThemeProvider() {
-  const [theme, setTheme] = useState<Theme>("crimson");
+  const [theme, setTheme] = useState<Theme>("aurora");
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -31,7 +33,7 @@ export function ThemeProvider() {
     <div className="fixed bottom-4 right-4 z-50">
       {open && (
         <div className="mb-2 glass-strong rounded-2xl p-3 w-72 shadow-glow">
-          <p className="text-[10px] uppercase tracking-wider text-muted mb-2 font-bold">Thème visuel</p>
+          <p className="text-[10px] uppercase tracking-wider text-muted mb-2 font-bold">Choix du thème</p>
           <div className="space-y-1.5">
             {THEMES.map(t => (
               <button

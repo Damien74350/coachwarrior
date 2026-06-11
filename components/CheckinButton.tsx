@@ -44,10 +44,10 @@ export function CheckinButton({ size = "default" }: { size?: "default" | "small"
                   <div className="absolute inset-x-4 h-0.5 bg-flame shadow-glow" style={{ animation: "scan 1.6s ease-in-out infinite" }} />
                 </div>
                 <p className="mt-5 font-black text-lg">Scanne le QR à l'entrée</p>
-                <p className="text-xs text-muted mt-1 flex items-center justify-center gap-1.5">
+                <p className="text-xs text-white/60 mt-1 flex items-center justify-center gap-1.5">
                   <MapPin size={12} className="text-flame" /> Entrée principale détectée
                 </p>
-                <p className="text-[11px] text-muted mt-3">2 secondes, c'est tout. Tes minutes commencent à compter.</p>
+                <p className="text-[11px] text-white/60 mt-3">2 secondes — c'est tout. Tes minutes commencent à compter.</p>
               </div>
             ) : (
               <div className="text-center py-2">

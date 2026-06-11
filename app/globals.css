@@ -2,8 +2,36 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ───── THÈMES — variables pivot pour Tailwind + custom utils ───── */
-:root, [data-theme="crimson"] {
+/* ───── THÈMES — Aurora est le nouveau défaut, accessible à tous ───── */
+:root, [data-theme="aurora"] {
+  --bg-base: #0d0c12;
+  --bg-glow-1: rgba(251, 146, 124, 0.16);
+  --bg-glow-2: rgba(252, 211, 124, 0.12);
+  --bg-glow-3: rgba(94, 234, 212, 0.10);
+  --c-war: 251 113 133;      /* coral rose, énergique sans agressif */
+  --c-flame: 251 146 60;      /* ambre solaire */
+  --c-gold: 252 211 77;       /* miel chaud */
+  --c-cyan: 94 234 212;       /* menthe douce */
+  --c-plasma: 167 139 250;    /* lavande */
+  --c-glow: rgba(251, 113, 133, 0.22);
+  --c-glow-flame: rgba(251, 146, 60, 0.20);
+  --grad: linear-gradient(135deg, rgb(251 113 133) 0%, rgb(251 146 60) 55%, rgb(252 211 77) 100%);
+}
+[data-theme="pastel"] {
+  --bg-base: #14111a;
+  --bg-glow-1: rgba(244, 182, 230, 0.18);
+  --bg-glow-2: rgba(186, 230, 253, 0.14);
+  --bg-glow-3: rgba(187, 247, 208, 0.10);
+  --c-war: 244 182 230;       /* rose pastel */
+  --c-flame: 253 186 116;     /* pêche pastel */
+  --c-gold: 253 224 71;       /* jaune doux */
+  --c-cyan: 134 239 172;      /* menthe pastel */
+  --c-plasma: 196 181 253;    /* lavande pastel */
+  --c-glow: rgba(244, 182, 230, 0.30);
+  --c-glow-flame: rgba(253, 186, 116, 0.28);
+  --grad: linear-gradient(135deg, rgb(244 182 230) 0%, rgb(253 186 116) 50%, rgb(134 239 172) 100%);
+}
+[data-theme="crimson"] {
   --bg-base: #0a0a0f;
   --bg-glow-1: rgba(255, 59, 48, 0.18);
   --bg-glow-2: rgba(255, 122, 24, 0.12);
@@ -67,24 +95,24 @@ body {
     radial-gradient(900px 500px at -10% 30%, var(--bg-glow-2), transparent 60%),
     radial-gradient(600px 400px at 50% 110%, var(--bg-glow-3), transparent 60%),
     var(--bg-base);
-  color: #e5e7eb;
+  color: #e7e5eb;
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   transition: background 0.4s ease;
 }
 
 .glass {
-  background: linear-gradient(180deg, rgba(28, 28, 38, 0.72), rgba(19, 19, 26, 0.72));
-  border: 1px solid #2a2a38;
-  backdrop-filter: blur(8px);
+  background: linear-gradient(180deg, rgba(38, 32, 44, 0.55), rgba(26, 22, 30, 0.55));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
 }
 .glass-strong {
-  background: linear-gradient(180deg, rgba(28, 28, 38, 0.92), rgba(19, 19, 26, 0.92));
-  border: 1px solid #2a2a38;
-  backdrop-filter: blur(12px);
+  background: linear-gradient(180deg, rgba(38, 32, 44, 0.78), rgba(26, 22, 30, 0.78));
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  backdrop-filter: blur(14px);
 }
 
-.shadow-glow      { box-shadow: 0 0 30px var(--c-glow); }
-.shadow-glowFlame { box-shadow: 0 0 30px var(--c-glow-flame); }
+.shadow-glow      { box-shadow: 0 10px 40px var(--c-glow); }
+.shadow-glowFlame { box-shadow: 0 10px 40px var(--c-glow-flame); }
 
 .flame-gradient { background: var(--grad); }
 .flame-text {
@@ -96,10 +124,10 @@ body {
 
 .scrollbar-thin::-webkit-scrollbar { width: 8px; height: 8px; }
 .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
-.scrollbar-thin::-webkit-scrollbar-thumb { background: #2a2a38; border-radius: 4px; }
+.scrollbar-thin::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
 
 .skeleton {
-  background: linear-gradient(90deg, #1c1c26 0%, #2a2a38 50%, #1c1c26 100%);
+  background: linear-gradient(90deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.04) 100%);
   background-size: 200% 100%;
   animation: shimmer 1.4s infinite;
 }
@@ -112,7 +140,13 @@ body {
   0%, 100% { box-shadow: 0 0 0 0 var(--c-glow); }
   50% { box-shadow: 0 0 0 12px transparent; }
 }
-.pulse-glow { animation: pulseGlow 2.2s infinite; }
+.pulse-glow { animation: pulseGlow 2.4s infinite; }
+
+@keyframes floaty {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+.floaty { animation: floaty 6s ease-in-out infinite; }
 
 .grain {
   background-image: radial-gradient(rgba(255,255,255,0.02) 1px, transparent 1px);
