@@ -1,5 +1,6 @@
 import type {
   User, Session, Club, League, LeagueStanding, Course, Coach, ClubKpis, Tier,
+  Season, Friend, HealthSource, CheckinSpot, AutoRule,
 } from "./types";
 
 const FIRST = ["Alex", "Marie", "Lucas", "Sofia", "Theo", "Emma", "Noah", "Léa", "Hugo", "Camille", "Jules", "Chloé", "Ethan", "Inès", "Adam", "Sarah", "Tom", "Zoé", "Liam", "Jade", "Mateo", "Lina", "Gabriel", "Nina", "Raphaël", "Mila", "Arthur", "Anna", "Louis", "Eva"];
@@ -333,4 +334,204 @@ export function findCoach(id: string): Coach | undefined {
 
 export function findCourse(id: string): Course | undefined {
   return COURSES.find(c => c.id === id);
+}
+
+// ────────────────────────────────────────────────────────────
+// SEASONS — classements actifs remis à zéro à chaque saison.
+// Le tout-temps existe en archive, pas en vue par défaut.
+// ────────────────────────────────────────────────────────────
+
+const SEASON_END = new Date(Date.now() + 22 * 86400000);
+const SEASON_START = new Date(SEASON_END.getTime() - 90 * 86400000);
+
+export const CURRENT_SEASON: Season = {
+  id: "s_winter_2026",
+  name: "Saison Hiver 2026",
+  startsAt: SEASON_START.toISOString(),
+  endsAt: SEASON_END.toISOString(),
+  theme: "L'hiver révèle les guerriers. Tous repartent à zéro.",
+};
+
+export const PAST_SEASONS: Season[] = [
+  { id: "s_autumn_2025", name: "Saison Automne 2025", startsAt: "2025-09-22", endsAt: "2025-12-20", theme: "—" },
+  { id: "s_summer_2025", name: "Saison Été 2025", startsAt: "2025-06-21", endsAt: "2025-09-21", theme: "—" },
+];
+
+// ────────────────────────────────────────────────────────────
+// FRIENDS — cercle proche, défaut du leaderboard membre.
+// Les classements locaux sont la home ; le mondial est optionnel.
+// ────────────────────────────────────────────────────────────
+
+export const FRIENDS: Friend[] = [
+  { id: "f_1", name: "Karim B.",   avatar: "KB", countryCode: "🇲🇦", city: "Casablanca", clubName: "Iron Republic Casa",  weekPoints: 624, weekMinutes: 540, tier: "LEGEND",   status: "training" },
+  { id: "f_2", name: "Sofia M.",   avatar: "SM", countryCode: "🇪🇸", city: "Madrid",     clubName: "Pulse Athletic MAD", weekPoints: 587, weekMinutes: 510, tier: "DIAMOND",  status: "online"   },
+  { id: "f_3", name: "Liam S.",    avatar: "LS", countryCode: "🇬🇧", city: "Londres",    clubName: "Vortex Fit LDN",      weekPoints: 398, weekMinutes: 360, tier: "PLATINUM", status: "offline"  },
+  { id: "f_4", name: "Yuki T.",    avatar: "YT", countryCode: "🇯🇵", city: "Tokyo",      clubName: "Olympus Gym TYO",    weekPoints: 376, weekMinutes: 340, tier: "GOLD",     status: "online"   },
+  { id: "f_5", name: "Inès L.",    avatar: "IL", countryCode: "🇫🇷", city: ME.city,      clubName: ME.clubName,            weekPoints: 318, weekMinutes: 290, tier: "GOLD",     status: "online"   },
+  { id: "f_6", name: "Mateo P.",   avatar: "MP", countryCode: "🇧🇷", city: "São Paulo",  clubName: "Phoenix Club SAO",   weekPoints: 244, weekMinutes: 220, tier: "SILVER",   status: "offline"  },
+  { id: "f_7", name: "Chloé D.",   avatar: "CD", countryCode: "🇫🇷", city: ME.city,      clubName: ME.clubName,            weekPoints: 198, weekMinutes: 180, tier: "SILVER",   status: "offline"  },
+];
+
+// Quartier = même ville. C'est l'échelle qui motive vraiment.
+export function getNeighborhoodLeaderboard(limit = 30): User[] {
+  const list = [...USERS, ME].filter(u => u.city === ME.city);
+  return list.sort((a, b) => b.weekPoints - a.weekPoints).slice(0, limit);
+}
+
+// Classement amis = cercle social. Toujours petit, toujours motivant.
+export function getFriendsLeaderboard(): User[] {
+  const synthetic: User[] = FRIENDS.map(f => ({
+    id: f.id,
+    name: f.name,
+    avatar: f.avatar,
+    clubId: "",
+    clubName: f.clubName,
+    country: "",
+    countryCode: f.countryCode,
+    city: f.city,
+    tier: f.tier,
+    totalMinutes: 0,
+    totalPoints: 0,
+    weekMinutes: f.weekMinutes,
+    weekPoints: f.weekPoints,
+    streak: 0,
+    joinedAt: "",
+    badges: [],
+  }));
+  return [...synthetic, ME].sort((a, b) => b.weekPoints - a.weekPoints);
+}
+
+// ────────────────────────────────────────────────────────────
+// HEALTH SOURCES — pour éliminer la saisie manuelle.
+// ────────────────────────────────────────────────────────────
+
+export const HEALTH_SOURCES: HealthSource[] = [
+  { id: "apple_health", label: "Apple Health",  connected: true,  lastSyncMin: 3,    minutesContribWeek: 142 },
+  { id: "google_fit",   label: "Google Fit",    connected: false                                              },
+  { id: "strava",       label: "Strava",        connected: true,  lastSyncMin: 18,   minutesContribWeek: 88   },
+  { id: "garmin",       label: "Garmin Connect",connected: false                                              },
+  { id: "fitbit",       label: "Fitbit",        connected: false                                              },
+];
+
+// Check-in spots du club — QR / NFC.
+export const CHECKIN_SPOTS: CheckinSpot[] = [
+  { id: "sp_1", label: "Entrée principale",    type: "ENTRY", active: true  },
+  { id: "sp_2", label: "Salle des cours",      type: "ROOM",  active: true  },
+  { id: "sp_3", label: "Plateau de musculation",type: "ROOM", active: true  },
+  { id: "sp_4", label: "Studio yoga",          type: "ROOM",  active: false },
+];
+
+// ────────────────────────────────────────────────────────────
+// AUTOPILOT — réduit le travail du gérant à zéro par défaut.
+// ────────────────────────────────────────────────────────────
+
+export const AUTO_RULES: AutoRule[] = [
+  {
+    id: "ar_bonus_fill",
+    name: "Auto-bonus créneaux creux",
+    description: "Active automatiquement un ×2 sur les cours dont le remplissage est sous 50% à J-2.",
+    category: "BONUS",
+    enabled: true,
+    trigger: "Cours à J-2 avec < 50% de places réservées",
+    action: "Active ×2 et push notif aux 200 membres les plus actifs",
+    firedThisMonth: 14,
+    impact: "+38% de remplissage moyen sur ces cours",
+  },
+  {
+    id: "ar_bonus_offpeak",
+    name: "Boost permanent heures creuses",
+    description: "Tous les cours entre 14h et 16h reçoivent un ×1.5 d'office.",
+    category: "BONUS",
+    enabled: true,
+    trigger: "Cours programmé entre 14h et 16h",
+    action: "Multiplier le score base ×1.5",
+    firedThisMonth: 42,
+    impact: "+22% d'affluence sur les après-midi",
+  },
+  {
+    id: "ar_league_monthly",
+    name: "Ligue mensuelle auto-générée",
+    description: "Crée la ligue interne du club le 1er de chaque mois, 30 jours.",
+    category: "LEAGUE",
+    enabled: true,
+    trigger: "Le 1er du mois à 00:00",
+    action: "Lance une nouvelle ligue interne avec prize template",
+    firedThisMonth: 1,
+    impact: "Taux de participation 64% des membres actifs",
+  },
+  {
+    id: "ar_league_streak",
+    name: "Streak Survivor mensuel",
+    description: "Lance la ligue 'Streak Survivor' (qui tient la plus longue streak) chaque mois.",
+    category: "LEAGUE",
+    enabled: false,
+    trigger: "Le 1er du mois",
+    action: "Crée la ligue Streak Survivor pour 30 jours",
+    firedThisMonth: 0,
+  },
+  {
+    id: "ar_at_risk",
+    name: "Sauvetage membres à risque",
+    description: "Envoie un push perso aux membres qui n'ont pas check-in depuis 14j.",
+    category: "NUDGE",
+    enabled: true,
+    trigger: "Pas de check-in depuis 14 jours",
+    action: "Push 'Tu nous manques' + bonus ×3 perso de 7j",
+    firedThisMonth: 87,
+    impact: "31% de réactivation, +14pts de rétention",
+  },
+  {
+    id: "ar_streak_save",
+    name: "Sauve-streak",
+    description: "Quand un membre risque de perdre sa streak (rien fait depuis 18h), notification rappel.",
+    category: "NUDGE",
+    enabled: true,
+    trigger: "Streak ≥ 7j et aucune activité depuis 18h",
+    action: "Push 'Ta streak de {N} jours est en danger'",
+    firedThisMonth: 312,
+    impact: "78% reprennent l'entraînement dans la soirée",
+  },
+  {
+    id: "ar_birthday",
+    name: "Anniversaire athlète",
+    description: "Bonus ×2 toute la journée d'anniversaire du membre.",
+    category: "NUDGE",
+    enabled: true,
+    trigger: "Date d'anniversaire du membre",
+    action: "Bonus ×2 personnel toute la journée + message coach",
+    firedThisMonth: 9,
+    impact: "Visite +91% le jour J",
+  },
+  {
+    id: "ar_recovery",
+    name: "Suggestion récupération",
+    description: "Au-delà de 4 jours d'affilée, propose une séance yoga / mobilité (bonus).",
+    category: "RECOVERY",
+    enabled: true,
+    trigger: "4+ jours d'entraînement consécutifs",
+    action: "Push suggestion cours mobilité avec bonus ×2",
+    firedThisMonth: 56,
+    impact: "Réduit l'abandon post-burnout de 40%",
+  },
+];
+
+// Suggestions de l'autopilot pour la home club.
+export type AutoSuggestion = {
+  id: string;
+  title: string;
+  reason: string;
+  cta: string;
+  severity: "info" | "warn" | "win";
+};
+export const AUTO_SUGGESTIONS: AutoSuggestion[] = [
+  { id: "sg_1", title: "Boxing Warrior — créneau samedi 19h", reason: "82% rempli en moyenne, mais la semaine prochaine est à 33%. Active un ×2.", cta: "Activer le bonus", severity: "warn" },
+  { id: "sg_2", title: "12 membres à risque cette semaine", reason: "Pas de check-in depuis 10+ jours. Le bot peut envoyer un push perso.", cta: "Lancer la campagne", severity: "warn" },
+  { id: "sg_3", title: "Lance la ligue 'Battle des coachs'", reason: "Tes coachs Karim & Marc ont les meilleurs ratings. Une battle ferait monter le NPS.", cta: "Créer la ligue (1 clic)", severity: "info" },
+  { id: "sg_4", title: "Inès L. va atteindre Diamant", reason: "Plus que 80 pts. Envoie-lui un message du club pour fêter ça.", cta: "Envoyer le message", severity: "win" },
+];
+
+export function autopilotStats() {
+  const enabled = AUTO_RULES.filter(r => r.enabled).length;
+  const monthly = AUTO_RULES.reduce((s, r) => s + (r.enabled ? r.firedThisMonth : 0), 0);
+  return { enabled, total: AUTO_RULES.length, monthly };
 }

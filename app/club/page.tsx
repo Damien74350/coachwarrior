@@ -2,18 +2,22 @@ import Link from "next/link";
 import { Card, Stat, Pill } from "../../components/Card";
 import { MinutesChart } from "../../components/MinutesChart";
 import { LineGrowthChart } from "../../components/LineGrowthChart";
+import { SeasonBadge } from "../../components/SeasonBadge";
 import {
-  MY_CLUB,
-  CLUB_KPIS,
-  weeklyMinutesSeries,
-  membersGrowthSeries,
-  COURSES,
-  LEAGUES,
-  getClubLeaderboard,
+  MY_CLUB, CLUB_KPIS, weeklyMinutesSeries, membersGrowthSeries,
+  COURSES, LEAGUES, getClubLeaderboard,
+  AUTO_RULES, AUTO_SUGGESTIONS, autopilotStats,
 } from "../../lib/mock";
 import { Leaderboard } from "../../components/Leaderboard";
 import { compact, minutesToHm } from "../../lib/format";
-import { Users, Timer, Crown, BarChart3, ArrowRight, Trophy, Sparkles, Target } from "lucide-react";
+import {
+  Users, Timer, Crown, BarChart3, ArrowRight, Trophy, Sparkles, Target,
+  Bot, Zap, AlertTriangle, CheckCircle2, Power,
+} from "lucide-react";
+
+const SEV_COLOR: Record<string, "war" | "flame" | "success" | "cyan"> = {
+  warn: "war", info: "cyan", win: "success",
+};
 
 export default function ClubDashboard() {
   const week = weeklyMinutesSeries();
@@ -21,28 +25,78 @@ export default function ClubDashboard() {
   const bonusCourses = COURSES.filter(c => c.bonusMultiplier > 1);
   const topMembers = getClubLeaderboard(MY_CLUB.id, 5);
   const clubLeague = LEAGUES.find(l => l.scope === "CLUB");
+  const auto = autopilotStats();
 
   return (
     <div className="space-y-6">
       <header className="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
         <div>
-          <Pill color="cyan">Espace club</Pill>
-          <h1 className="mt-3 text-3xl sm:text-4xl font-black tracking-tight">
-            {MY_CLUB.name}
-          </h1>
+          <div className="flex items-center gap-2">
+            <Pill color="cyan">Espace club</Pill>
+            <SeasonBadge compact />
+          </div>
+          <h1 className="mt-3 text-3xl sm:text-4xl font-black tracking-tight">{MY_CLUB.name}</h1>
           <p className="mt-1 text-muted text-sm">
             {MY_CLUB.brand} · {MY_CLUB.city}, {MY_CLUB.country} · {MY_CLUB.members.toLocaleString("fr-FR")} membres
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Link href="/club/courses" className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-war/15 text-war ring-1 ring-war/30 text-sm font-semibold hover:bg-war/20">
-            <Sparkles size={14} /> Activer un bonus
+          <Link href="/club/automations" className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg flame-gradient text-black text-sm font-bold shadow-glow">
+            <Bot size={14} /> Autopilot
           </Link>
-          <Link href="/club/leagues" className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-sm font-semibold">
-            <Trophy size={14} /> Lancer une ligue
+          <Link href="/club/courses" className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-war/15 text-war ring-1 ring-war/30 text-sm font-semibold hover:bg-war/20">
+            <Sparkles size={14} /> Bonus manuel
           </Link>
         </div>
       </header>
+
+      {/* AUTOPILOT BANNER — la promesse #1 : 0 effort pour le gérant */}
+      <section className="rounded-3xl bg-gradient-to-r from-flame/10 via-war/10 to-cyan/10 ring-1 ring-flame/30 p-5 sm:p-6">
+        <div className="flex flex-col lg:flex-row gap-5 lg:items-center justify-between">
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 rounded-2xl flame-gradient grid place-items-center text-black shrink-0">
+              <Bot size={22} />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <p className="font-black text-lg">Autopilot — actif</p>
+                <Pill color="success"><CheckCircle2 size={10} className="mr-1" />En route</Pill>
+              </div>
+              <p className="text-sm text-muted mt-0.5">
+                <strong className="text-white">{auto.enabled} règles</strong> sur {auto.total} actives ·{" "}
+                <strong className="text-flame">{auto.monthly} actions automatiques</strong> ce mois-ci.
+              </p>
+              <p className="text-xs text-muted mt-1">Tu n'as <strong className="text-white">rien à activer manuellement</strong>. Le bot gère bonus, ligues, sauvetage à risque.</p>
+            </div>
+          </div>
+          <Link href="/club/automations" className="text-xs font-bold text-flame hover:underline whitespace-nowrap inline-flex items-center gap-1">
+            Voir & ajuster <ArrowRight size={12} />
+          </Link>
+        </div>
+      </section>
+
+      {/* SUGGESTIONS DE L'AUTOPILOT — 1 clic */}
+      <Card title="Actions suggérées par l'autopilot" subtitle="1 clic. Le bot fait le reste." right={<Pill color="flame">{AUTO_SUGGESTIONS.length} idées</Pill>}>
+        <div className="grid sm:grid-cols-2 gap-3">
+          {AUTO_SUGGESTIONS.map(s => (
+            <div key={s.id} className="rounded-xl bg-white/5 ring-1 ring-white/10 p-4 hover:ring-flame/40 transition">
+              <div className="flex items-start justify-between gap-2">
+                <Pill color={SEV_COLOR[s.severity]}>
+                  {s.severity === "warn" && <AlertTriangle size={10} className="mr-1" />}
+                  {s.severity === "win" && <Crown size={10} className="mr-1" />}
+                  {s.severity === "info" && <Zap size={10} className="mr-1" />}
+                  {s.severity}
+                </Pill>
+              </div>
+              <p className="mt-2 font-bold text-sm">{s.title}</p>
+              <p className="mt-1 text-xs text-muted">{s.reason}</p>
+              <button className="mt-3 text-xs font-bold text-flame hover:underline inline-flex items-center gap-1">
+                {s.cta} <ArrowRight size={11} />
+              </button>
+            </div>
+          ))}
+        </div>
+      </Card>
 
       {/* KPIs */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -53,20 +107,10 @@ export default function ClubDashboard() {
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6">
-        <Card
-          className="lg:col-span-2"
-          title="Activité hebdomadaire"
-          subtitle="Total minutes par jour, tous membres confondus"
-          right={<Pill color="success">+{CLUB_KPIS.minutesChange.toFixed(1)}% sem.</Pill>}
-        >
+        <Card className="lg:col-span-2" title="Activité hebdomadaire" subtitle="Total minutes par jour, tous membres" right={<Pill color="success">+{CLUB_KPIS.minutesChange.toFixed(1)}% sem.</Pill>}>
           <MinutesChart data={week} />
         </Card>
-
-        <Card
-          title="Croissance membres actifs"
-          subtitle="6 derniers mois"
-          right={<Pill color="cyan">+{CLUB_KPIS.membersChange.toFixed(1)}%</Pill>}
-        >
+        <Card title="Croissance membres actifs" subtitle="6 derniers mois" right={<Pill color="cyan">+{CLUB_KPIS.membersChange.toFixed(1)}%</Pill>}>
           <LineGrowthChart data={growth} xKey="month" dataKey="members" color="#22d3ee" />
         </Card>
       </div>
@@ -74,12 +118,12 @@ export default function ClubDashboard() {
       <div className="grid lg:grid-cols-3 gap-6">
         <Card
           className="lg:col-span-2"
-          title="Bonus points actifs"
-          subtitle="Tes leviers de remplissage"
+          title="Bonus actifs"
+          subtitle="Mix entre activation auto et manuelle"
           right={<Link href="/club/courses" className="text-xs text-flame font-bold hover:underline inline-flex items-center gap-1">Gérer <ArrowRight size={12} /></Link>}
         >
           <div className="grid sm:grid-cols-2 gap-3">
-            {bonusCourses.map(c => (
+            {bonusCourses.map((c, i) => (
               <div key={c.id} className="rounded-xl bg-white/5 p-3 ring-1 ring-white/10 hover:ring-flame/40 transition">
                 <div className="flex items-start justify-between">
                   <div>
@@ -88,22 +132,20 @@ export default function ClubDashboard() {
                   </div>
                   <Pill color="flame">×{c.bonusMultiplier}</Pill>
                 </div>
-                <div className="mt-3 flex items-center justify-between text-xs">
-                  <span className="text-muted">{c.bookings}/{c.capacity} inscrits</span>
-                  <div className="w-24 h-1.5 rounded-full bg-white/10 overflow-hidden">
-                    <div className="h-full flame-gradient" style={{ width: `${(c.bookings / c.capacity) * 100}%` }} />
-                  </div>
+                <div className="mt-2 flex items-center justify-between text-[11px]">
+                  <span className="text-muted">{c.bookings}/{c.capacity}</span>
+                  {i % 2 === 0 ? (
+                    <span className="text-cyan inline-flex items-center gap-1"><Bot size={10} /> activé auto</span>
+                  ) : (
+                    <span className="text-muted">activé manuellement</span>
+                  )}
                 </div>
               </div>
             ))}
           </div>
         </Card>
 
-        <Card
-          title="Ligue interne du club"
-          subtitle={clubLeague?.name}
-          right={<Link href="/club/leagues" className="text-xs text-flame font-bold hover:underline">Détails</Link>}
-        >
+        <Card title="Ligue interne du club" subtitle={clubLeague?.name} right={<Link href="/club/leagues" className="text-xs text-flame font-bold hover:underline">Détails</Link>}>
           <Leaderboard users={topMembers} pointKey="weekPoints" showClub={false} showCountry={false} />
         </Card>
       </div>

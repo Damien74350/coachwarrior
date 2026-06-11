@@ -3,17 +3,18 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Logo } from "./Logo";
-import { Flame, LayoutDashboard, Trophy, User, Building2, Users, BookOpen, Award, BarChart3 } from "lucide-react";
+import { Flame, LayoutDashboard, Trophy, User, Building2, Users, BookOpen, Award, BarChart3, Bot } from "lucide-react";
 
 const USER_LINKS = [
   { href: "/user", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/user/leaderboard", label: "Classement", icon: Trophy },
+  { href: "/user/leaderboard", label: "Classements", icon: Trophy },
   { href: "/user/sessions", label: "Mes séances", icon: Flame },
   { href: "/user/profile", label: "Profil", icon: User },
 ];
 
 const CLUB_LINKS = [
   { href: "/club", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/club/automations", label: "Autopilot", icon: Bot },
   { href: "/club/leagues", label: "Ligues", icon: Trophy },
   { href: "/club/members", label: "Membres", icon: Users },
   { href: "/club/courses", label: "Cours & Bonus", icon: BookOpen },

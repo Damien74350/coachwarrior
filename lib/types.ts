@@ -106,3 +106,51 @@ export type ClubKpis = {
   pointsChange: number;
   netPromoterScore: number;
 };
+
+export type Season = {
+  id: string;
+  name: string;        // "Saison Hiver 2026"
+  startsAt: string;
+  endsAt: string;
+  theme: string;       // narrative
+};
+
+export type Friend = {
+  id: string;
+  name: string;
+  avatar: string;
+  countryCode: string;
+  city: string;
+  clubName: string;
+  weekPoints: number;
+  weekMinutes: number;
+  tier: Tier;
+  status: "online" | "training" | "offline";
+};
+
+export type HealthSource = {
+  id: "apple_health" | "google_fit" | "strava" | "garmin" | "fitbit";
+  label: string;
+  connected: boolean;
+  lastSyncMin?: number; // minutes ago
+  minutesContribWeek?: number;
+};
+
+export type CheckinSpot = {
+  id: string;
+  label: string;       // "Entrée principale", "Salle des cours"
+  type: "ENTRY" | "ROOM" | "EQUIPMENT";
+  active: boolean;
+};
+
+export type AutoRule = {
+  id: string;
+  name: string;
+  description: string;
+  category: "BONUS" | "LEAGUE" | "NUDGE" | "RECOVERY";
+  enabled: boolean;
+  trigger: string;     // human readable
+  action: string;      // human readable
+  firedThisMonth: number;
+  impact?: string;     // measured outcome
+};

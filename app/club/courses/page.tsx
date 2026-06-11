@@ -108,18 +108,16 @@ export default function CoursesPage() {
         ))}
       </div>
 
-      <Card title="💡 Bonnes pratiques" subtitle="Pour maximiser tes bonus">
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 text-sm">
-          {[
-            "Active ×2+ sur tes créneaux creux pour les remplir.",
-            "Limite les bonus à 30% de tes cours pour rester impactant.",
-            "Renouvelle chaque semaine pour créer un effet 'à ne pas manquer'.",
-            "Combine bonus + ligue interne pour doper la rétention.",
-            "Annonce les bonus sur Insta/Stories — ROI mesuré côté inscriptions.",
-            "Programme des bonus surprise (push notification membres).",
-          ].map(t => (
-            <div key={t} className="rounded-xl bg-white/5 p-3 ring-1 ring-white/10">{t}</div>
-          ))}
+      <Card title="L'Autopilot peut tout faire à ta place" subtitle="Active une fois, oublie pour de bon">
+        <div className="rounded-xl bg-flame/5 ring-1 ring-flame/30 p-4 text-sm">
+          <p className="font-bold flex items-center gap-2"><Sparkles size={14} className="text-flame" /> Auto-bonus créneaux creux</p>
+          <p className="text-muted text-xs mt-1">
+            À J-2, tout cours sous 50% de remplissage reçoit un ×2 + un push aux 200 membres les plus actifs.
+            Impact mesuré : <strong className="text-flame">+38% de remplissage</strong>.
+          </p>
+          <a href="/club/automations" className="mt-2 inline-block text-xs font-bold text-flame hover:underline">
+            Ajuster les règles →
+          </a>
         </div>
       </Card>
     </div>
