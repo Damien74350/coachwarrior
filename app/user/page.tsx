@@ -1,12 +1,14 @@
 import Link from "next/link";
-import { Flame, Trophy, Timer, Zap, ArrowRight, Crown, Award, Target, Heart, Activity, Plug, CheckCircle2 } from "lucide-react";
+import { Flame, Trophy, Timer, Zap, ArrowRight, Crown, Award, Target, Heart, Activity, Plug, CheckCircle2, Shield } from "lucide-react";
 import { Card, Stat, Pill } from "../../components/Card";
 import { MinutesChart } from "../../components/MinutesChart";
 import { Leaderboard } from "../../components/Leaderboard";
 import { CheckinButton } from "../../components/CheckinButton";
 import { SeasonBadge } from "../../components/SeasonBadge";
+import { TerritoryBanner } from "../../components/TerritoryBanner";
+import { ChallengeBanner } from "../../components/ChallengeBanner";
 import {
-  ME, MY_SESSIONS, COURSES, HEALTH_SOURCES, FRIENDS,
+  ME, MY_SESSIONS, COURSES, HEALTH_SOURCES,
   getClubLeaderboard, getFriendsLeaderboard, getNeighborhoodLeaderboard,
 } from "../../lib/mock";
 import { compact, minutesToHm, tierLabel, tierBg, relativeDate } from "../../lib/format";
@@ -18,7 +20,6 @@ export default function UserDashboard() {
     return days.map((day, i) => ({ day, minutes: totals[i] }));
   })();
 
-  // Rangs LOCAUX en priorité — c'est ce qui motive vraiment.
   const friendsLb = getFriendsLeaderboard();
   const neighLb = getNeighborhoodLeaderboard(50);
   const clubLb = getClubLeaderboard(ME.clubId, 50);
@@ -27,11 +28,10 @@ export default function UserDashboard() {
   const clubRank = clubLb.findIndex(u => u.id === "me") + 1;
 
   const bonusCourses = COURSES.filter(c => c.bonusMultiplier > 1).slice(0, 3);
-  const recentSessions = MY_SESSIONS.slice(0, 5);
+  const recentSessions = MY_SESSIONS.slice(0, 4);
   const connectedSources = HEALTH_SOURCES.filter(s => s.connected);
   const autoMinutesShare = connectedSources.reduce((s, x) => s + (x.minutesContribWeek ?? 0), 0);
 
-  // tier progression
   const tierThresholds = [
     { tier: "BRONZE", min: 0 }, { tier: "SILVER", min: 1500 },
     { tier: "GOLD", min: 5000 }, { tier: "PLATINUM", min: 12000 },
@@ -45,10 +45,18 @@ export default function UserDashboard() {
 
   return (
     <div className="space-y-6">
-      {/* HERO */}
-      <section className="glass-strong rounded-3xl p-6 sm:p-8 relative overflow-hidden">
-        <div className="absolute -top-20 -right-20 w-72 h-72 rounded-full flame-gradient opacity-20 blur-3xl" />
-        <div className="relative grid lg:grid-cols-2 gap-6 items-center">
+      {/* #1 — IDENTITÉ DE TERRITOIRE (on, avant moi) */}
+      <TerritoryBanner scope="user" />
+
+      {/* #2 — DÉFI SPONSORISÉ EN COURS */}
+      <ChallengeBanner />
+
+      {/* #3 — Action rapide : check-in */}
+      <section className="glass-strong rounded-3xl p-5 sm:p-6 flex flex-col lg:flex-row gap-4 lg:items-center justify-between">
+        <div className="flex items-start gap-4">
+          <div className="w-12 h-12 rounded-2xl flame-gradient grid place-items-center text-black shrink-0">
+            <Flame size={22} />
+          </div>
           <div>
             <div className="flex flex-wrap items-center gap-2">
               <Pill color="flame">Salut, {ME.name.split(" ")[0]} ⚔️</Pill>
@@ -57,53 +65,28 @@ export default function UserDashboard() {
               </span>
               <SeasonBadge compact />
             </div>
-            <h1 className="mt-3 text-3xl sm:text-5xl font-black tracking-tight">
-              <span className="flame-text">{ME.streak} jours</span> de streak.
-            </h1>
-            <p className="mt-2 text-muted">
-              Tu es <strong className="text-white">#{friendsRank} chez tes potes</strong>,{" "}
-              <strong className="text-white">#{neighRank} dans ta ville</strong> et{" "}
-              <strong className="text-white">#{clubRank} dans ton club</strong> cette saison.
+            <p className="mt-2 font-black text-xl">
+              <span className="flame-text">{ME.streak} jours</span> de streak. Continue.
             </p>
-
-            {/* CHECK-IN — élément #1, le plus visible */}
-            <div className="mt-5 flex flex-wrap items-center gap-3">
-              <CheckinButton />
-              <span className="text-xs text-muted">
-                ou Apple Health / Strava détecte ta séance auto
-              </span>
-            </div>
-          </div>
-
-          {/* tier progress */}
-          <div className="lg:justify-self-end lg:w-80 w-full">
-            <div className="flex items-center justify-between text-xs">
-              <span className="font-bold">{tierLabel(ME.tier)}</span>
-              <span className="text-muted">→ {next ? tierLabel(next.tier) : "Maxed"}</span>
-            </div>
-            <div className="mt-2 h-3 rounded-full bg-white/5 overflow-hidden ring-1 ring-white/10">
-              <div className="h-full flame-gradient" style={{ width: `${Math.min(100, tierProgress)}%` }} />
-            </div>
-            <div className="mt-2 flex justify-between text-[11px] text-muted">
-              <span>{compact(ME.totalPoints)} pts à vie</span>
-              {next && <span>{compact(next.min)} pts</span>}
-            </div>
-            <p className="mt-3 text-[11px] text-muted">
-              Le tier à vie ne se perd jamais. Les classements actifs se remettent à zéro chaque saison.
+            <p className="text-xs text-muted">
+              Tu contribues <strong className="text-white">{compact(ME.weekPoints)} pts</strong> au score du club cette semaine.
             </p>
           </div>
         </div>
+        <div className="flex items-center gap-3">
+          <CheckinButton />
+        </div>
       </section>
 
-      {/* KPIs */}
+      {/* #4 — KPIs perso */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <Stat icon={<Timer size={16} />} label="Minutes (cette sem.)" value={minutesToHm(ME.weekMinutes)} hint="objectif 300 min" trend={18.2} />
         <Stat icon={<Zap size={16} />} label="Points (cette sem.)" value={compact(ME.weekPoints)} hint="saison en cours" trend={12.6} />
         <Stat icon={<Flame size={16} />} label="Streak" value={`${ME.streak}j`} hint="record perso 51j" />
-        <Stat icon={<Crown size={16} />} label="Rang amis" value={`#${friendsRank}`} hint={`sur ${friendsLb.length}`} trend={4.0} />
+        <Stat icon={<Shield size={16} />} label="Apport au club" value={`#${clubRank}`} hint={`sur ${clubLb.length} membres`} trend={4.0} />
       </div>
 
-      {/* Sources connectées + chart */}
+      {/* #5 — Chart + Sources */}
       <div className="grid lg:grid-cols-3 gap-6">
         <Card
           className="lg:col-span-2"
@@ -131,9 +114,7 @@ export default function UserDashboard() {
                     {s.connected ? `Sync il y a ${s.lastSyncMin}min · ${s.minutesContribWeek} min cette sem.` : "Non connecté"}
                   </p>
                 </div>
-                {!s.connected && (
-                  <button className="text-[10px] font-bold text-flame hover:underline">Connecter</button>
-                )}
+                {!s.connected && <button className="text-[10px] font-bold text-flame hover:underline">Connecter</button>}
               </div>
             ))}
           </div>
@@ -143,18 +124,12 @@ export default function UserDashboard() {
         </Card>
       </div>
 
-      {/* Classements LOCAUX d'abord — amis, quartier, club */}
+      {/* #6 — Classements LOCAUX */}
       <div className="grid lg:grid-cols-3 gap-6">
-        <Card
-          title={<span className="flex items-center gap-2"><Heart size={14} className="text-flame" />Mes amis</span>}
-          subtitle={`#${friendsRank} sur ${friendsLb.length} · saison en cours`}
-        >
+        <Card title={<span className="flex items-center gap-2"><Heart size={14} className="text-flame" />Mes amis</span>} subtitle={`#${friendsRank} sur ${friendsLb.length}`}>
           <Leaderboard users={friendsLb} pointKey="weekPoints" showClub={false} showCountry={false} />
         </Card>
-        <Card
-          title={<span className="flex items-center gap-2"><Activity size={14} className="text-flame" />Mon quartier</span>}
-          subtitle={`${ME.city} · #${neighRank} sur ${neighLb.length}`}
-        >
+        <Card title={<span className="flex items-center gap-2"><Activity size={14} className="text-flame" />Mon quartier</span>} subtitle={`${ME.city} · #${neighRank}`}>
           <Leaderboard users={neighLb.slice(0, 6)} pointKey="weekPoints" showClub={false} showCountry={false} />
         </Card>
         <Card
@@ -166,6 +141,7 @@ export default function UserDashboard() {
         </Card>
       </div>
 
+      {/* #7 — Bonus + dernières séances */}
       <div className="grid lg:grid-cols-3 gap-6">
         <Card
           className="lg:col-span-2"
@@ -193,7 +169,7 @@ export default function UserDashboard() {
 
         <Card title="Dernières séances">
           <div className="space-y-2">
-            {recentSessions.slice(0, 4).map(s => (
+            {recentSessions.map(s => (
               <div key={s.id} className="rounded-xl bg-white/5 p-3">
                 <div className="flex items-start justify-between gap-2">
                   <div>
@@ -211,16 +187,30 @@ export default function UserDashboard() {
         </Card>
       </div>
 
-      <Card title="Tes badges" subtitle="Récompenses débloquées — gardées à vie" right={<Pill color="gold"><Award size={11} className="mr-1" />{ME.badges.length} badges</Pill>}>
-        <div className="flex flex-wrap gap-2">
-          {ME.badges.map(b => (
-            <span key={b} className="inline-flex items-center gap-1 rounded-full bg-flame/10 ring-1 ring-flame/30 px-3 py-1 text-sm font-semibold text-flame">
-              {b}
+      {/* #8 — Tier + badges (le perso, en bas) */}
+      <Card title="Ton parcours perso" subtitle="Tier à vie · badges débloqués" right={<Pill color="gold"><Award size={11} className="mr-1" />{ME.badges.length} badges</Pill>}>
+        <div className="flex flex-col lg:flex-row gap-6 items-center">
+          <div className="lg:w-80 w-full">
+            <div className="flex items-center justify-between text-xs">
+              <span className="font-bold">{tierLabel(ME.tier)}</span>
+              <span className="text-muted">→ {next ? tierLabel(next.tier) : "Maxed"}</span>
+            </div>
+            <div className="mt-2 h-3 rounded-full bg-white/5 overflow-hidden ring-1 ring-white/10">
+              <div className="h-full flame-gradient" style={{ width: `${Math.min(100, tierProgress)}%` }} />
+            </div>
+            <div className="mt-2 flex justify-between text-[11px] text-muted">
+              <span>{compact(ME.totalPoints)} pts à vie</span>
+              {next && <span>{compact(next.min)} pts</span>}
+            </div>
+          </div>
+          <div className="flex-1 flex flex-wrap gap-2">
+            {ME.badges.map(b => (
+              <span key={b} className="inline-flex items-center gap-1 rounded-full bg-flame/10 ring-1 ring-flame/30 px-3 py-1 text-sm font-semibold text-flame">{b}</span>
+            ))}
+            <span className="inline-flex items-center gap-1 rounded-full bg-white/5 ring-1 ring-white/10 px-3 py-1 text-sm font-medium text-muted">
+              <Target size={12} /> 6 prochains à débloquer
             </span>
-          ))}
-          <span className="inline-flex items-center gap-1 rounded-full bg-white/5 ring-1 ring-white/10 px-3 py-1 text-sm font-medium text-muted">
-            <Target size={12} /> 6 prochains à débloquer
-          </span>
+          </div>
         </div>
       </Card>
     </div>

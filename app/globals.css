@@ -2,15 +2,74 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ───── THÈMES — variables pivot pour Tailwind + custom utils ───── */
+:root, [data-theme="crimson"] {
+  --bg-base: #0a0a0f;
+  --bg-glow-1: rgba(255, 59, 48, 0.18);
+  --bg-glow-2: rgba(255, 122, 24, 0.12);
+  --bg-glow-3: rgba(124, 92, 255, 0.10);
+  --c-war: 255 59 48;
+  --c-flame: 255 122 24;
+  --c-gold: 255 200 61;
+  --c-cyan: 34 211 238;
+  --c-plasma: 124 92 255;
+  --c-glow: rgba(255, 59, 48, 0.25);
+  --c-glow-flame: rgba(255, 122, 24, 0.25);
+  --grad: linear-gradient(135deg, rgb(255 59 48) 0%, rgb(255 122 24) 50%, rgb(255 200 61) 100%);
+}
+[data-theme="midnight"] {
+  --bg-base: #070b14;
+  --bg-glow-1: rgba(34, 211, 238, 0.18);
+  --bg-glow-2: rgba(124, 92, 255, 0.14);
+  --bg-glow-3: rgba(59, 130, 246, 0.10);
+  --c-war: 34 211 238;
+  --c-flame: 124 92 255;
+  --c-gold: 59 130 246;
+  --c-cyan: 34 211 238;
+  --c-plasma: 124 92 255;
+  --c-glow: rgba(34, 211, 238, 0.30);
+  --c-glow-flame: rgba(124, 92, 255, 0.30);
+  --grad: linear-gradient(135deg, rgb(34 211 238) 0%, rgb(124 92 255) 60%, rgb(59 130 246) 100%);
+}
+[data-theme="swissgold"] {
+  --bg-base: #0b0a08;
+  --bg-glow-1: rgba(212, 164, 55, 0.22);
+  --bg-glow-2: rgba(184, 133, 52, 0.14);
+  --bg-glow-3: rgba(243, 210, 122, 0.08);
+  --c-war: 212 164 55;
+  --c-flame: 184 133 52;
+  --c-gold: 243 210 122;
+  --c-cyan: 220 188 130;
+  --c-plasma: 138 106 32;
+  --c-glow: rgba(212, 164, 55, 0.30);
+  --c-glow-flame: rgba(243, 210, 122, 0.25);
+  --grad: linear-gradient(135deg, rgb(212 164 55) 0%, rgb(184 133 52) 55%, rgb(243 210 122) 100%);
+}
+[data-theme="spartan"] {
+  --bg-base: #070d0a;
+  --bg-glow-1: rgba(16, 185, 129, 0.22);
+  --bg-glow-2: rgba(132, 204, 22, 0.12);
+  --bg-glow-3: rgba(34, 211, 238, 0.10);
+  --c-war: 16 185 129;
+  --c-flame: 132 204 22;
+  --c-gold: 34 211 238;
+  --c-cyan: 34 211 238;
+  --c-plasma: 16 185 129;
+  --c-glow: rgba(16, 185, 129, 0.30);
+  --c-glow-flame: rgba(132, 204, 22, 0.25);
+  --grad: linear-gradient(135deg, rgb(16 185 129) 0%, rgb(132 204 22) 60%, rgb(34 211 238) 100%);
+}
+
 html, body { height: 100%; }
 body {
   background:
-    radial-gradient(1200px 600px at 80% -10%, rgba(255, 59, 48, 0.18), transparent 60%),
-    radial-gradient(900px 500px at -10% 30%, rgba(255, 122, 24, 0.12), transparent 60%),
-    radial-gradient(600px 400px at 50% 110%, rgba(124, 92, 255, 0.10), transparent 60%),
-    #0a0a0f;
+    radial-gradient(1200px 600px at 80% -10%, var(--bg-glow-1), transparent 60%),
+    radial-gradient(900px 500px at -10% 30%, var(--bg-glow-2), transparent 60%),
+    radial-gradient(600px 400px at 50% 110%, var(--bg-glow-3), transparent 60%),
+    var(--bg-base);
   color: #e5e7eb;
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  transition: background 0.4s ease;
 }
 
 .glass {
@@ -18,18 +77,18 @@ body {
   border: 1px solid #2a2a38;
   backdrop-filter: blur(8px);
 }
-
 .glass-strong {
   background: linear-gradient(180deg, rgba(28, 28, 38, 0.92), rgba(19, 19, 26, 0.92));
   border: 1px solid #2a2a38;
   backdrop-filter: blur(12px);
 }
 
-.flame-gradient {
-  background: linear-gradient(135deg, #ff3b30 0%, #ff7a18 50%, #ffc83d 100%);
-}
+.shadow-glow      { box-shadow: 0 0 30px var(--c-glow); }
+.shadow-glowFlame { box-shadow: 0 0 30px var(--c-glow-flame); }
+
+.flame-gradient { background: var(--grad); }
 .flame-text {
-  background: linear-gradient(135deg, #ff3b30 0%, #ff7a18 50%, #ffc83d 100%);
+  background: var(--grad);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -50,8 +109,8 @@ body {
 }
 
 @keyframes pulseGlow {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.4); }
-  50% { box-shadow: 0 0 0 12px rgba(255, 59, 48, 0); }
+  0%, 100% { box-shadow: 0 0 0 0 var(--c-glow); }
+  50% { box-shadow: 0 0 0 12px transparent; }
 }
 .pulse-glow { animation: pulseGlow 2.2s infinite; }
 

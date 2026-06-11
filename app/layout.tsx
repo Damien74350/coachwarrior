@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { TopNav } from "../components/TopNav";
+import { ThemeProvider } from "../components/ThemeProvider";
 
 export const metadata: Metadata = {
   title: "WARfit — Gamifie ta forme. Fidélise ton club.",
@@ -21,6 +22,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <p>© {new Date().getFullYear()} WARfit — La régularité gagne. Toujours.</p>
           </div>
         </footer>
+        <ThemeProvider />
       </body>
     </html>
   );

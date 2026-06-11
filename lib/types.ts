@@ -154,3 +154,61 @@ export type AutoRule = {
   firedThisMonth: number;
   impact?: string;     // measured outcome
 };
+
+export type Sponsor = {
+  id: string;
+  name: string;
+  logo: string;        // initials
+  color: string;       // hex
+  tagline?: string;
+};
+
+export type Cause = {
+  id: string;
+  name: string;
+  short: string;       // "MSF", "WWF"
+  field: string;       // "Humanitaire", "Environnement"
+  emoji: string;
+};
+
+export type ChallengeStatus = "live" | "won" | "ongoing-won" | "missed";
+
+export type SponsoredChallenge = {
+  id: string;
+  city: string;
+  region: string;      // "Genève", "Île-de-France", etc.
+  sponsorId: string;
+  causeId: string;
+  targetMinutes: number;
+  currentMinutes: number;
+  donationAmount: number;
+  donationCurrency: string;
+  startsAt: string;
+  endsAt: string;
+  status: ChallengeStatus;
+  participatingClubs: number;
+  participatingMembers: number;
+  narrative: string;   // call to arms
+};
+
+export type TerritoryRival = {
+  clubName: string;
+  brand: string;
+  city: string;
+  arrondissement?: string;
+  weekPoints: number;
+  trend: number;       // +/- rank change
+  members: number;
+  logo: string;
+};
+
+export type Territory = {
+  id: string;
+  city: string;
+  zone: string;        // "11e arrondissement"
+  myClubRank: number;
+  totalClubsInZone: number;
+  myClubPoints: number;
+  leader: TerritoryRival;
+  rivals: TerritoryRival[];
+};

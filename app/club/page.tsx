@@ -3,6 +3,8 @@ import { Card, Stat, Pill } from "../../components/Card";
 import { MinutesChart } from "../../components/MinutesChart";
 import { LineGrowthChart } from "../../components/LineGrowthChart";
 import { SeasonBadge } from "../../components/SeasonBadge";
+import { TerritoryBanner } from "../../components/TerritoryBanner";
+import { ChallengeBanner } from "../../components/ChallengeBanner";
 import {
   MY_CLUB, CLUB_KPIS, weeklyMinutesSeries, membersGrowthSeries,
   COURSES, LEAGUES, getClubLeaderboard,
@@ -29,13 +31,19 @@ export default function ClubDashboard() {
 
   return (
     <div className="space-y-6">
+      {/* #1 — TERRITOIRE : la guerre du quartier */}
+      <TerritoryBanner scope="club" />
+
+      {/* #2 — DÉFI SPONSORISÉ : ta ville est dans un défi */}
+      <ChallengeBanner />
+
       <header className="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <Pill color="cyan">Espace club</Pill>
+            <Pill color="cyan">Pilotage interne</Pill>
             <SeasonBadge compact />
           </div>
-          <h1 className="mt-3 text-3xl sm:text-4xl font-black tracking-tight">{MY_CLUB.name}</h1>
+          <h1 className="mt-3 text-2xl sm:text-3xl font-black tracking-tight">{MY_CLUB.name}</h1>
           <p className="mt-1 text-muted text-sm">
             {MY_CLUB.brand} · {MY_CLUB.city}, {MY_CLUB.country} · {MY_CLUB.members.toLocaleString("fr-FR")} membres
           </p>

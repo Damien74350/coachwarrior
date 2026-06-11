@@ -1,6 +1,7 @@
 import type {
   User, Session, Club, League, LeagueStanding, Course, Coach, ClubKpis, Tier,
   Season, Friend, HealthSource, CheckinSpot, AutoRule,
+  Sponsor, Cause, SponsoredChallenge, TerritoryRival, Territory,
 } from "./types";
 
 const FIRST = ["Alex", "Marie", "Lucas", "Sofia", "Theo", "Emma", "Noah", "Léa", "Hugo", "Camille", "Jules", "Chloé", "Ethan", "Inès", "Adam", "Sarah", "Tom", "Zoé", "Liam", "Jade", "Mateo", "Lina", "Gabriel", "Nina", "Raphaël", "Mila", "Arthur", "Anna", "Louis", "Eva"];
@@ -534,4 +535,200 @@ export function autopilotStats() {
   const enabled = AUTO_RULES.filter(r => r.enabled).length;
   const monthly = AUTO_RULES.reduce((s, r) => s + (r.enabled ? r.firedThisMonth : 0), 0);
   return { enabled, total: AUTO_RULES.length, monthly };
+}
+
+// ────────────────────────────────────────────────────────────
+// TERRITOIRE — l'identité club passe AVANT l'identité perso.
+// On affiche d'abord "qui on est", puis "qui nous menace".
+// ────────────────────────────────────────────────────────────
+
+export const MY_TERRITORY: Territory = {
+  id: "ter_paris_11",
+  city: "Paris",
+  zone: "11e arrondissement",
+  myClubRank: 2,
+  totalClubsInZone: 6,
+  myClubPoints: 184_320,
+  leader: {
+    clubName: "Basic-Fit République",
+    brand: "Basic-Fit",
+    city: "Paris",
+    arrondissement: "11e",
+    weekPoints: 186_540,
+    trend: +1,
+    members: 1_820,
+    logo: "BF",
+  },
+  rivals: [
+    { clubName: "Basic-Fit République", brand: "Basic-Fit", city: "Paris", arrondissement: "11e", weekPoints: 186_540, trend: +1, members: 1_820, logo: "BF" },
+    { clubName: "Iron Republic Paris 11e", brand: "Iron Republic", city: "Paris", arrondissement: "11e", weekPoints: 184_320, trend: 0, members: 1_140, logo: "IR" },
+    { clubName: "Fitness Park Nation", brand: "Fitness Park", city: "Paris", arrondissement: "11e", weekPoints: 142_870, trend: -1, members: 1_310, logo: "FP" },
+    { clubName: "On Air Voltaire", brand: "On Air", city: "Paris", arrondissement: "11e", weekPoints: 96_410, trend: 0, members: 740, logo: "OA" },
+    { clubName: "Neoness Bastille", brand: "Neoness", city: "Paris", arrondissement: "11e", weekPoints: 84_220, trend: +1, members: 690, logo: "NS" },
+    { clubName: "Keep Cool Charonne", brand: "Keep Cool", city: "Paris", arrondissement: "11e", weekPoints: 71_080, trend: -1, members: 580, logo: "KC" },
+  ],
+};
+
+// ────────────────────────────────────────────────────────────
+// DÉFIS SPONSORISÉS — la 3e couche : effort = don à une cause.
+// Une ville pool ses minutes ; si l'objectif est atteint,
+// le sponsor verse à l'association. C'est l'essence du concept.
+// ────────────────────────────────────────────────────────────
+
+export const SPONSORS: Sponsor[] = [
+  { id: "sp_rolex",    name: "Fondation Rolex",       logo: "RX", color: "#a37e2c", tagline: "L'horlogerie soutient l'effort." },
+  { id: "sp_decath",   name: "Decathlon Foundation",  logo: "DC", color: "#0082c3", tagline: "Le sport, accessible à tous." },
+  { id: "sp_lvmh",     name: "LVMH Care",             logo: "LV", color: "#1a1a1a", tagline: "L'élégance au service de la cause." },
+  { id: "sp_coca",     name: "Coca-Cola Foundation",  logo: "CC", color: "#e8112d", tagline: "Bouger ensemble." },
+  { id: "sp_bnp",      name: "BNP Paribas Solidarité",logo: "BP", color: "#00a651", tagline: "La banque qui rend." },
+  { id: "sp_ck",       name: "Calvin Klein Sport",    logo: "CK", color: "#000000", tagline: "Move with purpose." },
+];
+
+export const CAUSES: Cause[] = [
+  { id: "ca_msf",     name: "Médecins Sans Frontières", short: "MSF",          field: "Humanitaire",  emoji: "🩺" },
+  { id: "ca_wwf",     name: "WWF",                       short: "WWF",          field: "Environnement",emoji: "🌍" },
+  { id: "ca_unicef",  name: "UNICEF",                    short: "UNICEF",       field: "Enfance",      emoji: "👧" },
+  { id: "ca_resto",   name: "Restos du Cœur",            short: "Restos du Cœur",field: "Solidarité",  emoji: "🍲" },
+  { id: "ca_secours", name: "Secours Populaire",         short: "Secours Pop.", field: "Solidarité",   emoji: "🤝" },
+  { id: "ca_sea",     name: "Sea Shepherd",              short: "Sea Shepherd", field: "Océans",       emoji: "🌊" },
+];
+
+const CH_END = new Date(Date.now() + 6 * 86400000);
+const CH_START = new Date(Date.now() - 24 * 86400000);
+
+export const CHALLENGES: SponsoredChallenge[] = [
+  {
+    id: "ch_geneva_rolex",
+    city: "Genève",
+    region: "Genève",
+    sponsorId: "sp_rolex",
+    causeId: "ca_msf",
+    targetMinutes: 430_000,
+    currentMinutes: 312_540,
+    donationAmount: 20_000,
+    donationCurrency: "CHF",
+    startsAt: CH_START.toISOString(),
+    endsAt: CH_END.toISOString(),
+    status: "live",
+    participatingClubs: 14,
+    participatingMembers: 4_820,
+    narrative: "Genève contre le silence des zones de guerre. Chaque minute d'effort rapproche d'un mois de soins sur le terrain.",
+  },
+  {
+    id: "ch_paris_decath",
+    city: "Paris",
+    region: "Île-de-France",
+    sponsorId: "sp_decath",
+    causeId: "ca_resto",
+    targetMinutes: 1_200_000,
+    currentMinutes: 894_300,
+    donationAmount: 50_000,
+    donationCurrency: "€",
+    startsAt: CH_START.toISOString(),
+    endsAt: CH_END.toISOString(),
+    status: "live",
+    participatingClubs: 42,
+    participatingMembers: 18_400,
+    narrative: "Paris transforme sa sueur en repas chauds. 50 000 € = 14 500 repas distribués cet hiver.",
+  },
+  {
+    id: "ch_lyon_bnp",
+    city: "Lyon",
+    region: "Auvergne-Rhône-Alpes",
+    sponsorId: "sp_bnp",
+    causeId: "ca_unicef",
+    targetMinutes: 680_000,
+    currentMinutes: 712_410,
+    donationAmount: 30_000,
+    donationCurrency: "€",
+    startsAt: CH_START.toISOString(),
+    endsAt: CH_END.toISOString(),
+    status: "ongoing-won",
+    participatingClubs: 19,
+    participatingMembers: 7_240,
+    narrative: "Lyon a déjà débloqué les 30 000 €. Tout effort supplémentaire est offert — pour aller plus loin.",
+  },
+  {
+    id: "ch_madrid_lvmh",
+    city: "Madrid",
+    region: "Comunidad de Madrid",
+    sponsorId: "sp_lvmh",
+    causeId: "ca_sea",
+    targetMinutes: 540_000,
+    currentMinutes: 121_080,
+    donationAmount: 25_000,
+    donationCurrency: "€",
+    startsAt: CH_START.toISOString(),
+    endsAt: CH_END.toISOString(),
+    status: "live",
+    participatingClubs: 11,
+    participatingMembers: 3_120,
+    narrative: "Madrid pour les océans. 25 000 € = une mission anti-braconnage pendant 3 mois.",
+  },
+  {
+    id: "ch_tokyo_coca",
+    city: "Tokyo",
+    region: "Kanto",
+    sponsorId: "sp_coca",
+    causeId: "ca_wwf",
+    targetMinutes: 920_000,
+    currentMinutes: 638_220,
+    donationAmount: 4_000_000,
+    donationCurrency: "¥",
+    startsAt: CH_START.toISOString(),
+    endsAt: CH_END.toISOString(),
+    status: "live",
+    participatingClubs: 28,
+    participatingMembers: 11_300,
+    narrative: "Tokyo court pour la forêt. 4M ¥ = 50 ha de reforestation au Mont Fuji.",
+  },
+];
+
+// Défis remportés le mois dernier (preuve sociale).
+export const PAST_CHALLENGES: SponsoredChallenge[] = [
+  {
+    id: "pc_1", city: "Genève", region: "Genève",
+    sponsorId: "sp_rolex", causeId: "ca_msf",
+    targetMinutes: 380_000, currentMinutes: 412_140,
+    donationAmount: 18_000, donationCurrency: "CHF",
+    startsAt: "2026-05-01", endsAt: "2026-05-31",
+    status: "won", participatingClubs: 12, participatingMembers: 4_120,
+    narrative: "—",
+  },
+  {
+    id: "pc_2", city: "Paris", region: "Île-de-France",
+    sponsorId: "sp_decath", causeId: "ca_secours",
+    targetMinutes: 1_100_000, currentMinutes: 1_184_200,
+    donationAmount: 45_000, donationCurrency: "€",
+    startsAt: "2026-05-01", endsAt: "2026-05-31",
+    status: "won", participatingClubs: 38, participatingMembers: 16_240,
+    narrative: "—",
+  },
+  {
+    id: "pc_3", city: "Berlin", region: "Berlin",
+    sponsorId: "sp_lvmh", causeId: "ca_wwf",
+    targetMinutes: 720_000, currentMinutes: 698_400,
+    donationAmount: 22_000, donationCurrency: "€",
+    startsAt: "2026-05-01", endsAt: "2026-05-31",
+    status: "missed", participatingClubs: 16, participatingMembers: 5_240,
+    narrative: "—",
+  },
+];
+
+export function findSponsor(id: string): Sponsor | undefined { return SPONSORS.find(s => s.id === id); }
+export function findCause(id: string): Cause | undefined { return CAUSES.find(c => c.id === id); }
+export function findChallenge(id: string): SponsoredChallenge | undefined { return CHALLENGES.find(c => c.id === id); }
+
+// Mon défi local (Paris).
+export const MY_CHALLENGE = CHALLENGES.find(c => c.city === "Paris")!;
+
+export function totalDonationsThisMonth(): { eur: number; chf: number; jpy: number; count: number } {
+  const won = [...CHALLENGES.filter(c => c.status === "ongoing-won"), ...PAST_CHALLENGES.filter(c => c.status === "won")];
+  let eur = 0, chf = 0, jpy = 0;
+  won.forEach(c => {
+    if (c.donationCurrency === "€") eur += c.donationAmount;
+    else if (c.donationCurrency === "CHF") chf += c.donationAmount;
+    else if (c.donationCurrency === "¥") jpy += c.donationAmount;
+  });
+  return { eur, chf, jpy, count: won.length };
 }
