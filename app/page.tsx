@@ -1,262 +1,190 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import SearchBar from "@/components/SearchBar";
-import AssetView from "@/components/AssetView";
-import WalletView from "@/components/WalletView";
-import MarketSentimentCard from "@/components/MarketSentiment";
-import type { MarketSentiment, SearchHit } from "@/lib/types";
-import { Sparkles, PlayCircle, Wallet, X } from "lucide-react";
-
-interface RecentItem {
-  kind: "crypto" | "stock" | "wallet";
-  id?: string;
-  subKind?: "equity" | "etf" | "index" | "crypto";
-  symbol: string;
-  name: string;
-  walletAddress?: string;
-}
-
-const CRYPTO_PICKS: SearchHit[] = [
-  { kind: "crypto", id: "bitcoin", symbol: "BTC", name: "Bitcoin", thumb: "https://assets.coingecko.com/coins/images/1/large/bitcoin.png" },
-  { kind: "crypto", id: "ethereum", symbol: "ETH", name: "Ethereum", thumb: "https://assets.coingecko.com/coins/images/279/large/ethereum.png" },
-  { kind: "crypto", id: "solana", symbol: "SOL", name: "Solana" },
-  { kind: "crypto", id: "binancecoin", symbol: "BNB", name: "BNB" },
-  { kind: "crypto", id: "ripple", symbol: "XRP", name: "XRP" },
-  { kind: "crypto", id: "cardano", symbol: "ADA", name: "Cardano" },
-];
-
-const STOCK_PICKS: SearchHit[] = [
-  { kind: "stock", subKind: "equity", id: "AAPL", symbol: "AAPL", name: "Apple Inc." },
-  { kind: "stock", subKind: "equity", id: "NVDA", symbol: "NVDA", name: "NVIDIA" },
-  { kind: "stock", subKind: "equity", id: "TSLA", symbol: "TSLA", name: "Tesla" },
-  { kind: "stock", subKind: "equity", id: "MSFT", symbol: "MSFT", name: "Microsoft" },
-  { kind: "stock", subKind: "equity", id: "GOOGL", symbol: "GOOGL", name: "Alphabet" },
-  { kind: "stock", subKind: "equity", id: "AMZN", symbol: "AMZN", name: "Amazon" },
-];
-
-const ETF_PICKS: SearchHit[] = [
-  { kind: "stock", subKind: "etf", id: "SPY", symbol: "SPY", name: "SPDR S&P 500 ETF" },
-  { kind: "stock", subKind: "etf", id: "QQQ", symbol: "QQQ", name: "Invesco QQQ (Nasdaq 100)" },
-  { kind: "stock", subKind: "etf", id: "VOO", symbol: "VOO", name: "Vanguard S&P 500" },
-  { kind: "stock", subKind: "etf", id: "VTI", symbol: "VTI", name: "Vanguard Total Stock Market" },
-  { kind: "stock", subKind: "etf", id: "IWM", symbol: "IWM", name: "iShares Russell 2000" },
-  { kind: "stock", subKind: "etf", id: "GLD", symbol: "GLD", name: "SPDR Gold Shares" },
-  { kind: "stock", subKind: "etf", id: "IBIT", symbol: "IBIT", name: "iShares Bitcoin Trust" },
-  { kind: "stock", subKind: "etf", id: "ARKK", symbol: "ARKK", name: "ARK Innovation ETF" },
-];
-
-type Selection =
-  | { type: "asset"; hit: SearchHit }
-  | { type: "wallet"; address: string }
-  | null;
+import Link from "next/link";
+import { Flame, Trophy, Users, BarChart3, Shield, Building2, ArrowRight, Sparkles, Target, Crown, Award } from "lucide-react";
+import { Pill } from "../components/Card";
 
 export default function Home() {
-  const [sel, setSel] = useState<Selection>(null);
-  const [history, setHistory] = useState<RecentItem[]>([]);
-  const [sentiment, setSentiment] = useState<MarketSentiment | null>(null);
-
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem("cw:history");
-      if (raw) setHistory(JSON.parse(raw));
-    } catch {}
-  }, []);
-
-  useEffect(() => {
-    fetch("/api/sentiment")
-      .then((r) => (r.ok ? r.json() : null))
-      .then((j) => j && setSentiment(j))
-      .catch(() => {});
-  }, []);
-
-  function persist(next: RecentItem[]) {
-    setHistory(next);
-    try {
-      localStorage.setItem("cw:history", JSON.stringify(next));
-    } catch {}
-  }
-
-  function pickAsset(h: SearchHit) {
-    setSel({ type: "asset", hit: h });
-    const filtered = history.filter(
-      (x) => !(x.kind === h.kind && x.id === h.id && !x.walletAddress)
-    );
-    persist([{ kind: h.kind, id: h.id, symbol: h.symbol, name: h.name, subKind: h.subKind }, ...filtered].slice(0, 10));
-  }
-
-  function pickWallet(address: string) {
-    setSel({ type: "wallet", address });
-    const filtered = history.filter((x) => !(x.kind === "wallet" && x.walletAddress === address));
-    const entry: RecentItem = {
-      kind: "wallet",
-      symbol: address.slice(0, 8) + "…",
-      name: address,
-      walletAddress: address,
-    };
-    persist([entry, ...filtered].slice(0, 10));
-  }
-
   return (
-    <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:py-12">
-      <header className="mb-8 text-center">
-        <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-border bg-surface/60 px-3 py-1 text-xs text-muted">
-          <Sparkles className="h-3.5 w-3.5 text-accent" /> CoachWarrior · Intelligence financière
-        </div>
-        <h1 className="mt-4 bg-gradient-to-br from-white via-white to-muted bg-clip-text text-4xl font-bold tracking-tight text-transparent sm:text-5xl">
-          Cryptos · Actions · ETF · Wallets
-        </h1>
-        <p className="mx-auto mt-3 max-w-2xl text-balance text-sm text-muted sm:text-base">
-          Prix live, indicateurs techniques, sentiment de marché, et inspection de wallet
-          (Ethereum, Bitcoin, Solana) — tout en un.
-        </p>
-      </header>
-
-      <div className="mb-4">
-        <SearchBar onSelect={pickAsset} onWallet={pickWallet} />
-      </div>
-
-      {!sel && (
-        <div className="mb-6 flex justify-center">
-          <button
-            onClick={() => pickAsset({ kind: "crypto", id: "__demo__", symbol: "DEMO", name: "Mode démo" })}
-            className="inline-flex items-center gap-2 rounded-xl border border-accent/40 bg-accent/10 px-4 py-2 text-sm font-semibold text-accent hover:bg-accent/20"
-          >
-            <PlayCircle className="h-4 w-4" />
-            Lancer la démo (sans API)
-          </button>
-        </div>
-      )}
-
-      {sel && (
-        <div className="mb-4 flex justify-end">
-          <button
-            onClick={() => setSel(null)}
-            className="inline-flex items-center gap-2 rounded-lg bg-surface px-3 py-1.5 text-xs text-muted hover:bg-surfaceAlt hover:text-white"
-          >
-            <X className="h-3.5 w-3.5" /> Fermer
-          </button>
-        </div>
-      )}
-
-      {!sel && (
-        <div className="space-y-6">
-          {sentiment && (sentiment.cryptoIndex !== null || sentiment.stockIndex !== null) && (
-            <MarketSentimentCard sentiment={sentiment} focus="both" />
-          )}
-
-          {history.length > 0 && (
-            <Section title="Récemment consultés">
-              {history.map((h, i) => (
-                <button
-                  key={`h-${i}-${h.kind}-${h.id || h.walletAddress}`}
-                  onClick={() =>
-                    h.kind === "wallet" && h.walletAddress
-                      ? pickWallet(h.walletAddress)
-                      : pickAsset(h as SearchHit)
-                  }
-                  className="glass flex items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-surfaceAlt"
-                >
-                  {h.kind === "wallet" ? (
-                    <span className="rounded-md bg-accent/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-accent">
-                      Wallet
-                    </span>
-                  ) : (
-                    <span
-                      className={`rounded-md px-1.5 py-0.5 text-[10px] font-semibold uppercase ${
-                        h.kind === "crypto"
-                          ? "bg-accent2/10 text-accent2"
-                          : h.subKind === "etf"
-                          ? "bg-warning/10 text-warning"
-                          : "bg-accent/10 text-accent"
-                      }`}
-                    >
-                      {h.kind === "crypto" ? "Crypto" : h.subKind === "etf" ? "ETF" : "Action"}
-                    </span>
-                  )}
-                  <span className="font-semibold">{h.symbol}</span>
-                  <span className="truncate text-muted">{h.name}</span>
-                </button>
-              ))}
-            </Section>
-          )}
-
-          <Section title="Top cryptos">
-            {CRYPTO_PICKS.map((h) => (
-              <PickButton key={`c-${h.id}`} hit={h} onPick={pickAsset} />
-            ))}
-          </Section>
-
-          <Section title="Top actions">
-            {STOCK_PICKS.map((h) => (
-              <PickButton key={`s-${h.id}`} hit={h} onPick={pickAsset} />
-            ))}
-          </Section>
-
-          <Section title="ETF populaires">
-            {ETF_PICKS.map((h) => (
-              <PickButton key={`e-${h.id}`} hit={h} onPick={pickAsset} />
-            ))}
-          </Section>
-
-          <div className="glass rounded-2xl p-5">
-            <div className="mb-2 flex items-center gap-2 text-sm font-semibold">
-              <Wallet className="h-4 w-4 text-accent" />
-              Inspecter un wallet
+    <div className="space-y-20">
+      {/* HERO */}
+      <section className="relative pt-8 sm:pt-16 pb-8">
+        <div className="grid lg:grid-cols-12 gap-10 items-center">
+          <div className="lg:col-span-7">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-war/10 ring-1 ring-war/30 text-war text-xs font-bold uppercase tracking-wider mb-6">
+              <Sparkles size={12} /> Le fitness, mais en jeu
             </div>
-            <p className="text-sm text-muted">
-              Collez une adresse Ethereum (<code className="text-xs">0x…</code>), Bitcoin
-              (<code className="text-xs">bc1…/1…/3…</code>) ou Solana dans la barre de recherche
-              ci-dessus pour voir les avoirs, la valeur totale en USD, et l'historique des
-              transactions (entrées = achats / réceptions).
+            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-[1.05]">
+              Gamifie ta forme.<br />
+              <span className="flame-text">Fidélise ton club.</span>
+            </h1>
+            <p className="mt-6 text-lg text-muted max-w-2xl">
+              WARfit récompense la <strong className="text-white">régularité</strong>, pas la performance.
+              Plus tu accumules de minutes, plus tu montes au classement mondial.
+              Et pour les clubs, c'est l'outil de fidélisation le plus complet du marché.
             </p>
+
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link
+                href="/user"
+                className="inline-flex items-center gap-2 px-5 py-3 rounded-xl flame-gradient text-black font-bold shadow-glow hover:shadow-glowFlame transition"
+              >
+                <Flame size={18} /> Côté membre
+                <ArrowRight size={16} />
+              </Link>
+              <Link
+                href="/club"
+                className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white/5 ring-1 ring-white/10 hover:bg-white/10 font-bold transition"
+              >
+                <Building2 size={18} /> Côté club
+                <ArrowRight size={16} />
+              </Link>
+            </div>
+
+            <div className="mt-10 grid grid-cols-3 gap-6 max-w-lg">
+              <div>
+                <p className="text-2xl font-black">36</p>
+                <p className="text-xs text-muted">clubs connectés</p>
+              </div>
+              <div>
+                <p className="text-2xl font-black">240+</p>
+                <p className="text-xs text-muted">athlètes en lice</p>
+              </div>
+              <div>
+                <p className="text-2xl font-black flame-text">15</p>
+                <p className="text-xs text-muted">pays · 4 continents</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Hero card preview */}
+          <div className="lg:col-span-5 relative">
+            <div className="glass-strong rounded-3xl p-6 shadow-glow">
+              <div className="flex items-center justify-between">
+                <Pill color="war">Top mondial · sem.</Pill>
+                <span className="text-xs text-muted">en direct</span>
+              </div>
+              <div className="mt-4 space-y-3">
+                {[
+                  { rank: 1, name: "Karim B.", flag: "🇲🇦", pts: 624, you: false, tier: "LEGEND" },
+                  { rank: 2, name: "Sofia M.", flag: "🇪🇸", pts: 587, you: false, tier: "DIAMOND" },
+                  { rank: 3, name: "Damien R. (toi)", flag: "🇫🇷", pts: 412, you: true, tier: "PLATINUM" },
+                  { rank: 4, name: "Liam S.", flag: "🇬🇧", pts: 398, you: false, tier: "PLATINUM" },
+                  { rank: 5, name: "Yuki T.", flag: "🇯🇵", pts: 376, you: false, tier: "GOLD" },
+                ].map(r => (
+                  <div key={r.rank} className={`flex items-center gap-3 rounded-xl px-3 py-2 ${r.you ? "bg-war/10 ring-1 ring-war/30" : "bg-white/5"}`}>
+                    <div className={`w-7 text-center font-black ${r.rank <= 3 ? "text-flame" : "text-muted"}`}>#{r.rank}</div>
+                    <div className="grid place-items-center w-8 h-8 rounded-lg bg-white/10 text-xs font-bold">
+                      {r.flag}
+                    </div>
+                    <div className="flex-1 text-sm font-semibold">{r.name}</div>
+                    <div className="text-right">
+                      <p className="font-black text-flame">{r.pts}<span className="text-muted text-xs"> pts</span></p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-5 flex items-center justify-between border-t border-border pt-4">
+                <div className="text-xs text-muted">Ta semaine</div>
+                <div className="flex items-center gap-1 text-sm">
+                  <Flame size={14} className="text-flame" />
+                  <span className="font-black">386 min</span>
+                  <span className="text-muted">·</span>
+                  <span className="font-black flame-text">412 pts</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="absolute -top-4 -right-3 glass rounded-2xl px-3 py-2 text-xs hidden sm:flex items-center gap-2 shadow-glow">
+              <Flame size={14} className="text-flame" />
+              <span className="font-bold">Streak 47 jours</span>
+            </div>
+            <div className="absolute -bottom-4 -left-3 glass rounded-2xl px-3 py-2 text-xs hidden sm:flex items-center gap-2">
+              <Crown size={14} className="text-gold" />
+              <span className="font-bold">Tier Platine atteint</span>
+            </div>
           </div>
         </div>
-      )}
+      </section>
 
-      {sel?.type === "asset" && (
-        <AssetView key={`${sel.hit.kind}-${sel.hit.id}`} hit={sel.hit} />
-      )}
-      {sel?.type === "wallet" && (
-        <WalletView key={`w-${sel.address}`} address={sel.address} />
-      )}
+      {/* VALUE — MEMBERS */}
+      <section>
+        <header className="mb-8">
+          <Pill color="flame">Côté membre</Pill>
+          <h2 className="mt-3 text-3xl sm:text-4xl font-black tracking-tight">
+            La régularité, c'est la victoire.
+          </h2>
+          <p className="mt-2 text-muted max-w-2xl">
+            Pas besoin d'être un athlète. Chaque minute d'activité compte. Tu accumules des points,
+            tu montes en tiers, tu gagnes des badges, tu te bats dans les classements de ton club, ta région, le monde.
+          </p>
+        </header>
+        <div className="grid md:grid-cols-3 gap-5">
+          {[
+            { icon: Flame, title: "1 minute = 1 point", desc: "Le système le plus simple du fitness. Multipliers bonus dispos sur les cours marqués par ton club." },
+            { icon: Trophy, title: "Classements multi-niveaux", desc: "Ton club, ta ville, ton groupe, ta région, ton pays, le monde. Tu choisis ta ligue." },
+            { icon: Crown, title: "Tiers & badges à vie", desc: "Bronze → Légende. Streaks, milestones, MVP du mois. Ton parcours raconte ton histoire." },
+          ].map((f, i) => (
+            <div key={i} className="glass rounded-2xl p-6 hover:ring-1 hover:ring-war/30 transition">
+              <div className="w-10 h-10 rounded-xl flame-gradient grid place-items-center text-black mb-3">
+                <f.icon size={20} />
+              </div>
+              <h3 className="font-black text-lg">{f.title}</h3>
+              <p className="mt-1 text-sm text-muted">{f.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
 
-      <footer className="mt-12 text-center text-xs text-muted">
-        Sources : CoinGecko, Yahoo Finance, Stooq, alternative.me, CNN Business, Ethplorer,
-        Blockstream, Solana RPC. Cet outil ne constitue pas un conseil en investissement.
-      </footer>
-    </main>
-  );
-}
+      {/* VALUE — CLUBS */}
+      <section>
+        <header className="mb-8">
+          <Pill color="cyan">Côté club</Pill>
+          <h2 className="mt-3 text-3xl sm:text-4xl font-black tracking-tight">
+            L'outil de fidélisation le plus complet.
+          </h2>
+          <p className="mt-2 text-muted max-w-2xl">
+            Dashboard temps réel, ligues internes et inter-clubs, bonus points dynamiques sur les cours,
+            vitrine de tes coachs. Transforme tes membres en communauté qui revient.
+          </p>
+        </header>
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+          {[
+            { icon: BarChart3, title: "Dashboard temps réel", desc: "Membres actifs, minutes hebdo, rétention, NPS. Tout au même endroit." },
+            { icon: Trophy, title: "Ligues internes & multi-clubs", desc: "Crée des compétitions entre membres, entre clubs de ton groupe, régionales." },
+            { icon: Target, title: "Bonus points dynamiques", desc: "Remplis tes créneaux creux : ×2, ×2.5 points sur les cours que tu choisis." },
+            { icon: Award, title: "Vitrine coachs", desc: "Profils, spécialités, ratings, followers. Tes coachs deviennent des stars." },
+          ].map((f, i) => (
+            <div key={i} className="glass rounded-2xl p-5">
+              <div className="w-9 h-9 rounded-lg bg-cyan/15 text-cyan grid place-items-center mb-3">
+                <f.icon size={18} />
+              </div>
+              <h3 className="font-bold">{f.title}</h3>
+              <p className="mt-1 text-xs text-muted">{f.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <div>
-      <div className="mb-2 text-xs uppercase tracking-wider text-muted">{title}</div>
-      <div className="flex flex-wrap gap-2">{children}</div>
+      {/* CTA */}
+      <section className="glass-strong rounded-3xl p-10 text-center relative overflow-hidden">
+        <div className="absolute inset-0 opacity-30 grain pointer-events-none" />
+        <div className="relative">
+          <Shield className="mx-auto text-flame" size={32} />
+          <h2 className="mt-4 text-3xl sm:text-4xl font-black tracking-tight">
+            Le combat quotidien, <span className="flame-text">récompensé</span>.
+          </h2>
+          <p className="mt-3 text-muted max-w-xl mx-auto">
+            Choisis ton côté. La démo est interactive, alimentée par des données réalistes.
+          </p>
+          <div className="mt-6 flex flex-wrap gap-3 justify-center">
+            <Link href="/user" className="inline-flex items-center gap-2 px-5 py-3 rounded-xl flame-gradient text-black font-bold shadow-glow">
+              <Flame size={18} /> Entrer côté membre
+            </Link>
+            <Link href="/club" className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white/5 ring-1 ring-white/10 hover:bg-white/10 font-bold">
+              <Building2 size={18} /> Entrer côté club
+            </Link>
+          </div>
+        </div>
+      </section>
     </div>
-  );
-}
-
-function PickButton({ hit, onPick }: { hit: SearchHit; onPick: (h: SearchHit) => void }) {
-  return (
-    <button
-      onClick={() => onPick(hit)}
-      className="glass flex items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-surfaceAlt"
-    >
-      <span
-        className={`rounded-md px-1.5 py-0.5 text-[10px] font-semibold uppercase ${
-          hit.kind === "crypto"
-            ? "bg-accent2/10 text-accent2"
-            : hit.subKind === "etf"
-            ? "bg-warning/10 text-warning"
-            : "bg-accent/10 text-accent"
-        }`}
-      >
-        {hit.kind === "crypto" ? "Crypto" : hit.subKind === "etf" ? "ETF" : "Action"}
-      </span>
-      <span className="font-semibold">{hit.symbol}</span>
-      <span className="text-muted">{hit.name}</span>
-    </button>
   );
 }

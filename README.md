@@ -1,98 +1,87 @@
-# CoachWarrior
+# WARfit
 
-Application web qui vous donne **tout** sur une crypto ou une action : prix, fondamentaux, indicateurs techniques, et un **signal clair** sur le bon moment pour vous positionner.
+**Gamifie ta forme. Fidélise ton club.**
 
-## Fonctionnalités
+WARfit transforme le fitness en jeu : la **régularité** est récompensée — pas la performance. Plus tu accumules de minutes, plus tu gagnes des points et tu montes au classement (club, ville, pays, monde). Pour les clubs, c'est un outil de fidélisation complet : dashboard temps réel, ligues internes & inter-clubs, bonus points dynamiques sur les cours, vitrine des coachs.
 
-- **Recherche universelle** : tapez un ticker ou un nom, l'app détecte automatiquement s'il s'agit d'une crypto ou d'une action.
-- **Fiche complète** :
-  - Prix temps réel, variations 24h / 7j / 30j / 1 an, capitalisation, volume, ATH/ATL ou 52-semaines.
-  - Pour les cryptos : offre circulante, max supply, rang, catégories, description.
-  - Pour les actions : secteur, industrie, P/E, dividende, bêta, actions en circulation, plus-haut/plus-bas 52 semaines.
-- **Indicateurs techniques** calculés côté serveur :
-  - RSI(14), MACD(12,26,9), EMA(12/26), SMA(20/50/200), Bandes de Bollinger(20, 2σ), volatilité annualisée 30j.
-- **Signal de positionnement** : `STRONG_BUY` / `BUY` / `HOLD` / `SELL` / `STRONG_SELL`, avec score chiffré (−100 à +100), niveau de confiance, et liste détaillée des raisons (chaque facteur contribuant au signal).
-- **Graphique** prix + SMA20/SMA50 sur 1M / 3M / 6M / 1A / Tout.
-- **Historique de consultation** local (localStorage) + suggestions rapides.
+## Deux espaces
+
+### Côté membre (`/user`)
+- **Dashboard** : streak, tier (Bronze → Légende), minutes & points hebdo, rang club + mondial, cours bonus à attraper.
+- **Classements** : portée (mon club / ma ville / mon pays / monde) × période (semaine / tout-temps).
+- **Mes séances** : historique avec points base + bonus, type d'effort, durée.
+- **Profil** : identité de combat, badges, stats à vie, coachs du club, préférences.
+
+### Côté club (`/club`)
+- **Dashboard** : KPIs fidélisation (membres actifs, rétention 90j, minutes hebdo, NPS), bonus actifs, top membres, objectifs du mois.
+- **Ligues** : interne (membres du club), groupe (clubs du même brand), régionale, internationale + 6 templates prêts à lancer.
+- **Membres** : table complète avec filtre par tier, recherche, identification des membres à risque vs champions.
+- **Cours & bonus** : multiplicateurs ×1 → ×3 activables par cours, taux de remplissage, bonnes pratiques.
+- **Coachs** : vitrine avec ratings, spécialités, followers, badges, mise en avant.
+- **Analytics** : cohortes de rétention, performance par cours, impact mesuré des bonus, croissance membres.
 
 ## Stack
 
-- Next.js 14 (App Router) + TypeScript
-- Tailwind CSS
-- Recharts pour les graphiques
-- Lucide pour les icônes
-- APIs publiques **sans clé** :
-  - [CoinGecko](https://www.coingecko.com/en/api/documentation) pour les cryptos
-  - [Yahoo Finance](https://finance.yahoo.com/) (endpoints publics) pour les actions
+- **Next.js 14** (App Router) + **TypeScript**
+- **Tailwind CSS** avec palette WARfit (war / flame / gold / cyan / plasma)
+- **Recharts** pour les visualisations
+- **Lucide** pour les icônes
+- Couche données : `lib/mock.ts` — 36 clubs, 240 athlètes, 15 pays, ligues multi-niveaux (extensible vers une vraie DB).
 
-## Démarrage
+## Lancer
 
 ```bash
 npm install
 npm run dev
-# ouvre http://localhost:3000
+# http://localhost:3000
 ```
 
-Build production :
-
+Build prod :
 ```bash
 npm run build
 npm start
 ```
 
-## Déploiement
-
-Le projet est prêt pour Vercel : push sur GitHub, importer le repo dans Vercel, déployer.
-
 ## Architecture
 
 ```
 app/
-  layout.tsx                  # Layout racine
-  page.tsx                    # Page d'accueil (recherche + résultats)
-  globals.css                 # Styles + dégradés
+  layout.tsx              # nav globale + footer
+  page.tsx                # landing hero + valeurs
+  loading.tsx, error.tsx
+  user/
+    page.tsx              # dashboard membre
+    leaderboard/page.tsx  # classements multi-portée
+    sessions/page.tsx     # historique
+    profile/page.tsx      # profil + badges
+  club/
+    page.tsx              # dashboard club
+    leagues/page.tsx      # ligues + templates
+    members/page.tsx      # base membres
+    courses/page.tsx      # cours & bonus
+    coaches/page.tsx      # vitrine coachs
+    analytics/page.tsx    # cohortes & impact bonus
   api/
-    search/route.ts           # GET /api/search?q=...
-    asset/route.ts            # GET /api/asset?kind=crypto|stock&id=...
+    me/route.ts
+    club/route.ts
+    leaderboard/route.ts
 
 components/
-  SearchBar.tsx               # Recherche avec autocomplete (debounce, clavier)
-  AssetView.tsx               # Vue principale (fetch + composition)
-  AssetHeader.tsx             # Nom, prix, badge, description
-  SignalBadge.tsx             # Le signal d'achat/vente
-  ReasonsList.tsx             # Liste des raisons du signal
-  PriceChart.tsx              # Graphique Recharts
-  MetricsGrid.tsx             # Grille des métriques de marché
-  IndicatorsPanel.tsx         # Panneau des indicateurs techniques
+  TopNav, Logo, Card/Stat/Pill,
+  MinutesChart, LineGrowthChart, Leaderboard
 
 lib/
-  indicators.ts               # SMA/EMA/RSI/MACD/Bollinger + moteur de scoring
-  providers.ts                # Wrappers CoinGecko & Yahoo Finance
-  format.ts                   # Helpers de formatage (money, %, compact, date)
-  types.ts                    # Types partagés
+  mock.ts                 # données démo réalistes (déterministe)
+  types.ts                # User, Club, League, Course, Coach, KPIs
+  format.ts               # minutesToHm, tier helpers, compact, %
 ```
 
-## Comment le signal est calculé
+## Prochaines briques (post-MVP)
 
-Le moteur (`lib/indicators.ts → analyze()`) combine plusieurs facteurs avec des poids :
-
-| Facteur                         | Poids | Bullish quand…                            | Bearish quand…                            |
-|---------------------------------|-------|-------------------------------------------|-------------------------------------------|
-| RSI(14)                         | 25    | RSI < 30 (survente)                       | RSI > 70 (surachat)                       |
-| MACD vs signal                  | 20    | MACD > signal et histogramme > 0          | MACD < signal et histogramme < 0          |
-| Tendance SMA50/SMA200           | 25    | Prix > SMA50 > SMA200 (golden cross zone) | Prix < SMA50 < SMA200 (death cross zone)  |
-| Bandes de Bollinger             | 10    | Prix sous la bande basse                  | Prix au-dessus de la bande haute          |
-| Variation 7j                    | 10    | Forte baisse (−10% → rebond probable)     | Forte hausse (+10% → prise de bénéfice)   |
-| Volatilité 30j                  | 10    | (info contextuelle, neutre)               | (info contextuelle, neutre)               |
-
-Le score est normalisé entre −100 et +100, puis catégorisé :
-
-- score ≥ +50 → `STRONG_BUY`
-- score ≥ +20 → `BUY`
-- −20 < score < +20 → `HOLD`
-- score ≤ −20 → `SELL`
-- score ≤ −50 → `STRONG_SELL`
-
-## ⚠️ Avertissement
-
-Cet outil est fourni à titre informatif et **ne constitue pas un conseil en investissement**. Les marchés financiers comportent des risques de perte en capital. Faites vos propres recherches.
+- Auth (Clerk / NextAuth) + DB (Postgres + Prisma)
+- Capteurs : Apple Health / Google Fit / Strava → calcul minutes automatique
+- Ingestion check-in club (badge / QR) → minutes vérifiées
+- Push notifications (bonus, streak en danger, fin de ligue)
+- App mobile React Native partageant `lib/`
+- Marketplace coachs
+- White-label par chaîne de clubs

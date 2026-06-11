@@ -5,17 +5,34 @@
 html, body { height: 100%; }
 body {
   background:
-    radial-gradient(1200px 600px at 80% -10%, rgba(124, 92, 255, 0.15), transparent 60%),
-    radial-gradient(900px 500px at -10% 30%, rgba(34, 211, 238, 0.10), transparent 60%),
+    radial-gradient(1200px 600px at 80% -10%, rgba(255, 59, 48, 0.18), transparent 60%),
+    radial-gradient(900px 500px at -10% 30%, rgba(255, 122, 24, 0.12), transparent 60%),
+    radial-gradient(600px 400px at 50% 110%, rgba(124, 92, 255, 0.10), transparent 60%),
     #0a0a0f;
   color: #e5e7eb;
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
 }
 
 .glass {
-  background: linear-gradient(180deg, rgba(28, 28, 38, 0.7), rgba(19, 19, 26, 0.7));
+  background: linear-gradient(180deg, rgba(28, 28, 38, 0.72), rgba(19, 19, 26, 0.72));
   border: 1px solid #2a2a38;
   backdrop-filter: blur(8px);
+}
+
+.glass-strong {
+  background: linear-gradient(180deg, rgba(28, 28, 38, 0.92), rgba(19, 19, 26, 0.92));
+  border: 1px solid #2a2a38;
+  backdrop-filter: blur(12px);
+}
+
+.flame-gradient {
+  background: linear-gradient(135deg, #ff3b30 0%, #ff7a18 50%, #ffc83d 100%);
+}
+.flame-text {
+  background: linear-gradient(135deg, #ff3b30 0%, #ff7a18 50%, #ffc83d 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .scrollbar-thin::-webkit-scrollbar { width: 8px; height: 8px; }
@@ -30,4 +47,15 @@ body {
 @keyframes shimmer {
   0% { background-position: 200% 0; }
   100% { background-position: -200% 0; }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.4); }
+  50% { box-shadow: 0 0 0 12px rgba(255, 59, 48, 0); }
+}
+.pulse-glow { animation: pulseGlow 2.2s infinite; }
+
+.grain {
+  background-image: radial-gradient(rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 3px 3px;
 }

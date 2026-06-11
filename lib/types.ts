@@ -1,91 +1,108 @@
-import type { AnalysisResult } from "./indicators";
+export type Tier = "BRONZE" | "SILVER" | "GOLD" | "PLATINUM" | "DIAMOND" | "LEGEND";
 
-export type AssetKind = "crypto" | "stock";
-
-export interface SearchHit {
-  kind: AssetKind;
-  subKind?: "equity" | "etf" | "index" | "crypto"; // for finer UI tagging
-  id: string; // coingecko id OR stock symbol
-  symbol: string;
-  name: string;
-  thumb?: string;
-  exchange?: string;
-  marketCapRank?: number | null;
-}
-
-export interface PricePoint {
-  t: number; // timestamp ms
-  c: number; // close
-  date: string; // formatted
-}
-
-export interface AssetSummary {
-  kind: AssetKind;
+export type User = {
   id: string;
-  symbol: string;
   name: string;
-  image?: string;
-  currency: string;
+  avatar: string; // emoji or initials
+  clubId: string;
+  clubName: string;
+  country: string;
+  countryCode: string;
+  city: string;
+  tier: Tier;
+  totalMinutes: number;
+  totalPoints: number;
+  weekMinutes: number;
+  weekPoints: number;
+  streak: number; // days
+  joinedAt: string;
+  badges: string[];
+};
 
-  price: number;
-  change24h: number | null;
-  change7d: number | null;
-  change30d: number | null;
-  change1y: number | null;
+export type Session = {
+  id: string;
+  userId: string;
+  date: string; // ISO
+  courseId: string | null;
+  courseName: string;
+  coachId: string | null;
+  coachName: string;
+  durationMin: number;
+  pointsBase: number;
+  pointsBonus: number;
+  type: "GROUP" | "SOLO" | "PT" | "CARDIO" | "STRENGTH" | "YOGA" | "BOXING";
+};
 
-  marketCap: number | null;
-  volume24h: number | null;
-  high24h: number | null;
-  low24h: number | null;
-  ath: number | null;
-  athDate?: string | null;
-  atl: number | null;
-  atlDate?: string | null;
+export type Club = {
+  id: string;
+  name: string;
+  brand: string; // chain / group
+  region: string;
+  country: string;
+  city: string;
+  members: number;
+  activeMembers: number;
+  retentionRate: number; // 0..1
+  weeklySessions: number;
+  avgWeeklyMinutesPerMember: number;
+  rating: number;
+  logo: string;
+};
 
-  // Crypto-specific
-  circulatingSupply?: number | null;
-  totalSupply?: number | null;
-  maxSupply?: number | null;
-  marketCapRank?: number | null;
-  homepage?: string | null;
-  description?: string | null;
-  categories?: string[];
+export type League = {
+  id: string;
+  name: string;
+  scope: "CLUB" | "GROUP" | "REGIONAL" | "NATIONAL" | "INTERNATIONAL";
+  participants: number; // clubs or users
+  participantType: "CLUB" | "USER";
+  endsAt: string;
+  prizePool?: string;
+  standings: LeagueStanding[];
+};
 
-  // Stock-specific
-  exchange?: string | null;
-  currencyName?: string | null;
-  longName?: string | null;
-  sector?: string | null;
-  industry?: string | null;
-  peRatio?: number | null;
-  eps?: number | null;
-  dividendYield?: number | null;
-  beta?: number | null;
-  bookValue?: number | null;
-  sharesOutstanding?: number | null;
-  fiftyTwoWeekHigh?: number | null;
-  fiftyTwoWeekLow?: number | null;
-}
+export type LeagueStanding = {
+  rank: number;
+  name: string;
+  meta: string; // city / country / member count
+  points: number;
+  trend: number; // +/- rank change
+  avatar?: string;
+};
 
-export interface AssetSummaryWithMeta extends AssetSummary {
-  dataSource: string; // "Yahoo Finance", "Stooq", "CoinGecko"
-  priceLive: boolean; // true if we got a real-time price, false if EOD-only
-  asOf?: string | null; // ISO timestamp of the price quote when known
-}
+export type Course = {
+  id: string;
+  name: string;
+  coachId: string;
+  coachName: string;
+  schedule: string;
+  capacity: number;
+  bookings: number;
+  durationMin: number;
+  type: Session["type"];
+  bonusMultiplier: number; // 1.0 = no bonus, 2.0 = double points
+  bonusEndsAt?: string;
+};
 
-export interface MarketSentiment {
-  cryptoIndex: number | null; // 0-100 (Fear & Greed - crypto)
-  cryptoLabel: string | null; // "Extreme Fear", "Fear", "Neutral", "Greed", "Extreme Greed"
-  cryptoChange1d: number | null;
-  cryptoChange7d: number | null;
-  cryptoHistory: { d: string; v: number }[]; // last 30 days
-  stockIndex: number | null; // 0-100 (CNN F&G - stocks)
-  stockLabel: string | null;
-}
+export type Coach = {
+  id: string;
+  name: string;
+  avatar: string;
+  specialty: string;
+  bio: string;
+  rating: number;
+  sessions: number;
+  followers: number;
+  badges: string[];
+};
 
-export interface AssetResponse {
-  summary: AssetSummaryWithMeta;
-  history: PricePoint[];
-  analysis: AnalysisResult;
-  sentiment?: MarketSentiment;
-}
+export type ClubKpis = {
+  activeMembers: number;
+  membersChange: number; // % vs last month
+  totalMinutesWeek: number;
+  minutesChange: number;
+  retentionRate: number;
+  retentionChange: number;
+  avgPointsPerMember: number;
+  pointsChange: number;
+  netPromoterScore: number;
+};
