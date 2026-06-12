@@ -200,6 +200,10 @@ export type TerritoryRival = {
   trend: number;       // +/- rank change
   members: number;
   logo: string;
+  x?: number;          // map position 0-800
+  y?: number;          // map position 0-500
+  color?: string;      // brand color hex
+  zone?: string;       // SVG path for territory polygon
 };
 
 export type Territory = {
@@ -211,4 +215,20 @@ export type Territory = {
   myClubPoints: number;
   leader: TerritoryRival;
   rivals: TerritoryRival[];
+};
+
+export type ClubDuel = {
+  id: string;
+  rivalClubName: string;
+  rivalBrand: string;
+  rivalLogo: string;
+  startsAt: string;
+  endsAt: string;
+  durationDays: number;
+  myMinutes: number;
+  rivalMinutes: number;
+  status: "pending" | "live" | "won" | "lost" | "draw";
+  stake: string;
+  myMembers: number;
+  rivalMembers: number;
 };

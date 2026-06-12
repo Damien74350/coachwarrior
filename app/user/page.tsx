@@ -6,6 +6,7 @@ import { Leaderboard } from "../../components/Leaderboard";
 import { CheckinButton } from "../../components/CheckinButton";
 import { SeasonBadge } from "../../components/SeasonBadge";
 import { TerritoryBanner } from "../../components/TerritoryBanner";
+import { TerritoryMap } from "../../components/TerritoryMap";
 import { ChallengeBanner } from "../../components/ChallengeBanner";
 import {
   ME, MY_SESSIONS, COURSES, HEALTH_SOURCES,
@@ -48,7 +49,10 @@ export default function UserDashboard() {
       {/* #1 — IDENTITÉ DE TERRITOIRE (on, avant moi) */}
       <TerritoryBanner scope="user" />
 
-      {/* #2 — DÉFI SPONSORISÉ EN COURS */}
+      {/* #2 — CARTE DU QUARTIER avec drapeaux et défis */}
+      <TerritoryMap compact />
+
+      {/* #3 — DÉFI SPONSORISÉ EN COURS */}
       <ChallengeBanner />
 
       {/* #3 — Action rapide : check-in */}

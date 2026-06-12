@@ -4,6 +4,7 @@ import { MinutesChart } from "../../components/MinutesChart";
 import { LineGrowthChart } from "../../components/LineGrowthChart";
 import { SeasonBadge } from "../../components/SeasonBadge";
 import { TerritoryBanner } from "../../components/TerritoryBanner";
+import { TerritoryMap } from "../../components/TerritoryMap";
 import { ChallengeBanner } from "../../components/ChallengeBanner";
 import {
   MY_CLUB, CLUB_KPIS, weeklyMinutesSeries, membersGrowthSeries,
@@ -34,7 +35,10 @@ export default function ClubDashboard() {
       {/* #1 — TERRITOIRE : la guerre du quartier */}
       <TerritoryBanner scope="club" />
 
-      {/* #2 — DÉFI SPONSORISÉ : ta ville est dans un défi */}
+      {/* #2 — CARTE INTERACTIVE avec drapeaux et défis */}
+      <TerritoryMap compact />
+
+      {/* #3 — DÉFI SPONSORISÉ : ta ville est dans un défi */}
       <ChallengeBanner />
 
       <header className="flex flex-col lg:flex-row lg:items-end justify-between gap-4">

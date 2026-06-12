@@ -3,10 +3,11 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Logo } from "./Logo";
-import { Flame, LayoutDashboard, Trophy, User, Building2, Users, BookOpen, Award, BarChart3, Bot, Heart } from "lucide-react";
+import { Flame, LayoutDashboard, Trophy, User, Building2, Users, BookOpen, Award, BarChart3, Bot, Heart, Map as MapIcon } from "lucide-react";
 
 const USER_LINKS = [
   { href: "/user", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/map", label: "Carte", icon: MapIcon },
   { href: "/challenges", label: "Défis sponsos", icon: Heart },
   { href: "/user/leaderboard", label: "Classements", icon: Trophy },
   { href: "/user/sessions", label: "Mes séances", icon: Flame },
@@ -15,6 +16,7 @@ const USER_LINKS = [
 
 const CLUB_LINKS = [
   { href: "/club", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/map", label: "Carte", icon: MapIcon },
   { href: "/challenges", label: "Défis sponsos", icon: Heart },
   { href: "/club/automations", label: "Autopilot", icon: Bot },
   { href: "/club/leagues", label: "Ligues", icon: Trophy },

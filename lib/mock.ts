@@ -1,7 +1,7 @@
 import type {
   User, Session, Club, League, LeagueStanding, Course, Coach, ClubKpis, Tier,
   Season, Friend, HealthSource, CheckinSpot, AutoRule,
-  Sponsor, Cause, SponsoredChallenge, TerritoryRival, Territory,
+  Sponsor, Cause, SponsoredChallenge, TerritoryRival, Territory, ClubDuel,
 } from "./types";
 
 const FIRST = ["Alex", "Marie", "Lucas", "Sofia", "Theo", "Emma", "Noah", "Léa", "Hugo", "Camille", "Jules", "Chloé", "Ethan", "Inès", "Adam", "Sarah", "Tom", "Zoé", "Liam", "Jade", "Mateo", "Lina", "Gabriel", "Nina", "Raphaël", "Mila", "Arthur", "Anna", "Louis", "Eva"];
@@ -550,24 +550,50 @@ export const MY_TERRITORY: Territory = {
   totalClubsInZone: 6,
   myClubPoints: 184_320,
   leader: {
-    clubName: "Basic-Fit République",
-    brand: "Basic-Fit",
-    city: "Paris",
-    arrondissement: "11e",
-    weekPoints: 186_540,
-    trend: +1,
-    members: 1_820,
-    logo: "BF",
+    clubName: "Basic-Fit République", brand: "Basic-Fit", city: "Paris", arrondissement: "11e",
+    weekPoints: 186_540, trend: +1, members: 1_820, logo: "BF",
+    x: 220, y: 180, color: "#fb923c", zone: "M 0 0 L 380 0 L 360 230 L 80 220 L 0 200 Z",
   },
   rivals: [
-    { clubName: "Basic-Fit République", brand: "Basic-Fit", city: "Paris", arrondissement: "11e", weekPoints: 186_540, trend: +1, members: 1_820, logo: "BF" },
-    { clubName: "Iron Republic Paris 11e", brand: "Iron Republic", city: "Paris", arrondissement: "11e", weekPoints: 184_320, trend: 0, members: 1_140, logo: "IR" },
-    { clubName: "Fitness Park Nation", brand: "Fitness Park", city: "Paris", arrondissement: "11e", weekPoints: 142_870, trend: -1, members: 1_310, logo: "FP" },
-    { clubName: "On Air Voltaire", brand: "On Air", city: "Paris", arrondissement: "11e", weekPoints: 96_410, trend: 0, members: 740, logo: "OA" },
-    { clubName: "Neoness Bastille", brand: "Neoness", city: "Paris", arrondissement: "11e", weekPoints: 84_220, trend: +1, members: 690, logo: "NS" },
-    { clubName: "Keep Cool Charonne", brand: "Keep Cool", city: "Paris", arrondissement: "11e", weekPoints: 71_080, trend: -1, members: 580, logo: "KC" },
+    { clubName: "Basic-Fit République",     brand: "Basic-Fit",     city: "Paris", arrondissement: "11e", weekPoints: 186_540, trend: +1, members: 1_820, logo: "BF",
+      x: 220, y: 180, color: "#fb923c", zone: "M 0 0 L 380 0 L 360 230 L 80 220 L 0 200 Z" },
+    { clubName: "Iron Republic Paris 11e",  brand: "Iron Republic", city: "Paris", arrondissement: "11e", weekPoints: 184_320, trend: 0,  members: 1_140, logo: "IR",
+      x: 480, y: 190, color: "#f43f5e", zone: "M 380 0 L 800 0 L 800 240 L 580 250 L 360 230 Z" },
+    { clubName: "Fitness Park Nation",      brand: "Fitness Park",  city: "Paris", arrondissement: "11e", weekPoints: 142_870, trend: -1, members: 1_310, logo: "FP",
+      x: 650, y: 360, color: "#10b981", zone: "M 800 240 L 800 500 L 540 500 L 520 340 L 580 250 Z" },
+    { clubName: "On Air Voltaire",          brand: "On Air",        city: "Paris", arrondissement: "11e", weekPoints: 96_410,  trend: 0,  members: 740,   logo: "OA",
+      x: 380, y: 380, color: "#a78bfa", zone: "M 80 220 L 360 230 L 580 250 L 520 340 L 540 500 L 220 500 L 100 380 Z" },
+    { clubName: "Neoness Bastille",         brand: "Neoness",       city: "Paris", arrondissement: "11e", weekPoints: 84_220,  trend: +1, members: 690,   logo: "NS",
+      x: 150, y: 380, color: "#22d3ee", zone: "M 0 200 L 80 220 L 100 380 L 220 500 L 0 500 Z" },
+    { clubName: "Keep Cool Charonne",       brand: "Keep Cool",     city: "Paris", arrondissement: "11e", weekPoints: 71_080,  trend: -1, members: 580,   logo: "KC",
+      x: 720, y: 220, color: "#eab308" },
   ],
 };
+
+export const CLUB_DUELS: ClubDuel[] = [
+  {
+    id: "d_1",
+    rivalClubName: "Basic-Fit République", rivalBrand: "Basic-Fit", rivalLogo: "BF",
+    startsAt: new Date(Date.now() - 3 * 86400000).toISOString(),
+    endsAt: new Date(Date.now() + 4 * 86400000).toISOString(),
+    durationDays: 7,
+    myMinutes: 92_410, rivalMinutes: 94_870,
+    status: "live",
+    stake: "Trophée hebdo + ×2 bonus 7j sur tous les cours du gagnant",
+    myMembers: 1_140, rivalMembers: 1_820,
+  },
+  {
+    id: "d_2",
+    rivalClubName: "Fitness Park Nation", rivalBrand: "Fitness Park", rivalLogo: "FP",
+    startsAt: new Date(Date.now() - 14 * 86400000).toISOString(),
+    endsAt: new Date(Date.now() - 7 * 86400000).toISOString(),
+    durationDays: 7,
+    myMinutes: 88_220, rivalMinutes: 71_410,
+    status: "won",
+    stake: "Bragging rights",
+    myMembers: 1_140, rivalMembers: 1_310,
+  },
+];
 
 // ────────────────────────────────────────────────────────────
 // DÉFIS SPONSORISÉS — la 3e couche : effort = don à une cause.
