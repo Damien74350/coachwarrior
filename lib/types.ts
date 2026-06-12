@@ -305,3 +305,43 @@ export type BossRaid = {
   rewardIfBeaten: string;
   status: "live" | "won" | "missed";
 };
+
+export type InternalLeague = {
+  id: string;
+  level: 1 | 2 | 3 | 4 | 5;
+  name: string;          // "Découverte"
+  emoji: string;
+  color: string;         // hex
+  motto: string;
+  description: string;
+  weeklyMinutesMin: number;
+  weeklyMinutesMax?: number;
+  ageInDaysMin?: number;
+  weights: { regularity: number; diversity: number; performance: number; impact: number };
+  promoteCoachId: string;
+  promoteCourseId: string;
+  membersInClub: number;
+};
+
+export type MyLeagueStanding = {
+  currentLeagueId: string;
+  rank: number;
+  totalInLeague: number;
+  weekPoints: number;
+  daysInLeague: number;
+  progressToNextPct: number;
+  nextLeagueId?: string;
+  pastLeagueIds: string[];
+  promotionPending: boolean;
+};
+
+export type PricingTier = {
+  id: string;
+  audience: "member" | "club" | "hq";
+  label: string;
+  baseEUR: number;
+  effectiveEUR: number;
+  trigger: string;
+  badge?: string;
+  highlight?: boolean;
+};

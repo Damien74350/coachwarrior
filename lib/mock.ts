@@ -3,6 +3,7 @@ import type {
   Season, Friend, HealthSource, CheckinSpot, AutoRule,
   Sponsor, Cause, SponsoredChallenge, TerritoryRival, Territory, ClubDuel,
   GroupHQ, CityPin, GroupChallenge, BattlePassTier, BattlePassMission, BossRaid,
+  InternalLeague, MyLeagueStanding, PricingTier,
 } from "./types";
 
 const FIRST = ["Alex", "Marie", "Lucas", "Sofia", "Theo", "Emma", "Noah", "Léa", "Hugo", "Camille", "Jules", "Chloé", "Ethan", "Inès", "Adam", "Sarah", "Tom", "Zoé", "Liam", "Jade", "Mateo", "Lina", "Gabriel", "Nina", "Raphaël", "Mila", "Arthur", "Anna", "Louis", "Eva"];
@@ -965,3 +966,125 @@ export const CURRENT_BOSS_RAID: BossRaid = {
 
 // War Coins du membre
 export const MY_WAR_COINS = 1_280;
+
+// ────────────────────────────────────────────────────────────
+// LIGUES INTERNES — par niveau, dans CHAQUE club.
+// Mamie, débutant et athlète n'affrontent QUE leurs pairs.
+// La régularité ouvre la promotion. La performance s'ajoute en haut.
+// ────────────────────────────────────────────────────────────
+
+export const INTERNAL_LEAGUES: InternalLeague[] = [
+  {
+    id: "il_1", level: 1, name: "Découverte", emoji: "🌱", color: "#86efac",
+    motto: "Tout commence ici.",
+    description: "Tu démarres. Ici on récompense uniquement le fait de venir. Aucun jugement, aucune perf.",
+    weeklyMinutesMin: 0, weeklyMinutesMax: 100,
+    weights: { regularity: 100, diversity: 0, performance: 0, impact: 0 },
+    promoteCoachId: "co_2", promoteCourseId: "cs_2", membersInClub: 248,
+  },
+  {
+    id: "il_2", level: 2, name: "Régulier", emoji: "💪", color: "#fdba74",
+    motto: "L'habitude est ancrée.",
+    description: "Tu viens régulièrement. On t'invite à tester d'autres disciplines pour trouver ta passion.",
+    weeklyMinutesMin: 100, weeklyMinutesMax: 200,
+    weights: { regularity: 90, diversity: 10, performance: 0, impact: 0 },
+    promoteCoachId: "co_5", promoteCourseId: "cs_5", membersInClub: 412,
+  },
+  {
+    id: "il_3", level: 3, name: "Engagé", emoji: "🔥", color: "#fb7185",
+    motto: "Le mode de vie a basculé.",
+    description: "Tu es chez toi ici. Spécialise-toi. Boxe, force, yoga avancé — choisis ta voie.",
+    weeklyMinutesMin: 200, weeklyMinutesMax: 300,
+    weights: { regularity: 80, diversity: 15, performance: 5, impact: 0 },
+    promoteCoachId: "co_3", promoteCourseId: "cs_3", membersInClub: 286,
+  },
+  {
+    id: "il_4", level: 4, name: "Compétiteur", emoji: "⚔️", color: "#a78bfa",
+    motto: "L'effort devient performance.",
+    description: "Tu vises l'excellence. Personal Training et programmes avancés t'attendent.",
+    weeklyMinutesMin: 300, weeklyMinutesMax: 450,
+    weights: { regularity: 70, diversity: 10, performance: 20, impact: 0 },
+    promoteCoachId: "co_4", promoteCourseId: "cs_4", membersInClub: 142,
+  },
+  {
+    id: "il_5", level: 5, name: "Élite", emoji: "👑", color: "#fcd34d",
+    motto: "Tu es la légende.",
+    description: "Top 5% du club. Ambassadeur, athlète de référence, mentor des autres ligues.",
+    weeklyMinutesMin: 450,
+    weights: { regularity: 60, diversity: 5, performance: 25, impact: 10 },
+    promoteCoachId: "co_1", promoteCourseId: "cs_1", membersInClub: 52,
+  },
+];
+
+export const MY_INTERNAL_LEAGUE: MyLeagueStanding = {
+  currentLeagueId: "il_3",        // Engagé
+  rank: 14,
+  totalInLeague: 286,
+  weekPoints: 412,
+  daysInLeague: 87,
+  progressToNextPct: 68,
+  nextLeagueId: "il_4",
+  pastLeagueIds: ["il_1", "il_2"],
+  promotionPending: false,
+};
+
+export function findInternalLeague(id: string): InternalLeague | undefined {
+  return INTERNAL_LEAGUES.find(l => l.id === id);
+}
+
+// Standings simulés pour chaque ligue
+export function getInternalLeagueStandings(leagueId: string, limit = 10) {
+  const seedNames = [
+    ["Marc D.", "🇫🇷", "MD"], ["Sofia M.", "🇪🇸", "SM"], ["Karim B.", "🇲🇦", "KB"],
+    ["Inès L.", "🇫🇷", "IL"], ["Liam S.", "🇬🇧", "LS"], ["Yuki T.", "🇯🇵", "YT"],
+    ["Théo R.", "🇫🇷", "TR"], ["Chloé D.", "🇫🇷", "CD"], ["Adam B.", "🇫🇷", "AB"],
+    ["Léa V.", "🇫🇷", "LV"], ["Hugo K.", "🇫🇷", "HK"], ["Camille N.", "🇫🇷", "CN"],
+    ["Damien R. (toi)", "🇫🇷", "DR"], ["Jules P.", "🇫🇷", "JP"], ["Eva G.", "🇫🇷", "EG"],
+  ];
+  const league = findInternalLeague(leagueId);
+  const baseMax = (league?.weeklyMinutesMax ?? 600);
+  const baseMin = league?.weeklyMinutesMin ?? 0;
+  return seedNames.slice(0, limit).map((s, i) => ({
+    rank: i + 1,
+    name: s[0],
+    flag: s[1],
+    avatar: s[2],
+    weekPoints: Math.round(baseMax - (i * (baseMax - baseMin) / limit) * 0.9 + (i % 3) * 12),
+    isMe: s[0].includes("toi"),
+  }));
+}
+
+// ────────────────────────────────────────────────────────────
+// PRICING — modèle d'auto-alignement avec la régularité
+// ────────────────────────────────────────────────────────────
+
+export const MEMBER_PRICING_TIERS: PricingTier[] = [
+  { id: "p_m_0", audience: "member", label: "Streak 0-6 jours", baseEUR: 9.90, effectiveEUR: 9.90, trigger: "Démarrage", badge: "—" },
+  { id: "p_m_1", audience: "member", label: "Streak 7-29 jours", baseEUR: 9.90, effectiveEUR: 7.90, trigger: "Habitude installée", badge: "-20%" },
+  { id: "p_m_2", audience: "member", label: "Streak 30-89 jours", baseEUR: 9.90, effectiveEUR: 5.90, trigger: "Le mode de vie", badge: "-40%", highlight: true },
+  { id: "p_m_3", audience: "member", label: "Streak 90-179 jours", baseEUR: 9.90, effectiveEUR: 3.90, trigger: "Iron Discipline", badge: "-60%" },
+  { id: "p_m_4", audience: "member", label: "Streak 180+ jours", baseEUR: 9.90, effectiveEUR: 0, trigger: "Ambassadeur WARfit", badge: "GRATUIT" },
+];
+
+export const CLUB_PRICING_TIERS: PricingTier[] = [
+  { id: "p_c_1", audience: "club", label: "Boutique (< 500 membres)", baseEUR: 149, effectiveEUR: 99, trigger: "Rétention 90j > 75% + gain défi mois", badge: "-50€" },
+  { id: "p_c_2", audience: "club", label: "Standard (500-1500)",      baseEUR: 249, effectiveEUR: 169, trigger: "Rétention 90j > 75% + gain défi mois", badge: "-80€", highlight: true },
+  { id: "p_c_3", audience: "club", label: "Premium (1500+)",          baseEUR: 399, effectiveEUR: 269, trigger: "Rétention 90j > 75% + gain défi mois", badge: "-130€" },
+];
+
+export const HQ_PRICING_TIERS: PricingTier[] = [
+  { id: "p_hq_1", audience: "hq", label: "Boutique chain (< 50 clubs)", baseEUR: 2_490, effectiveEUR: 2_490, trigger: "Iron Republic, Phoenix", badge: "" },
+  { id: "p_hq_2", audience: "hq", label: "National chain (50-300 clubs)", baseEUR: 9_900, effectiveEUR: 9_900, trigger: "On Air, Neoness, Iron Republic France", badge: "", highlight: true },
+  { id: "p_hq_3", audience: "hq", label: "Mass chain (300+ clubs)", baseEUR: 24_900, effectiveEUR: 24_900, trigger: "Basic-Fit, Fitness Park, Keep Cool", badge: "" },
+];
+
+// Streak actuel + remise active
+export const MY_PRICING = {
+  currentStreak: 47,
+  currentTier: MEMBER_PRICING_TIERS[2],   // 30-89 jours → 5,90 €
+  basePrice: 9.90,
+  effectivePrice: 5.90,
+  savedThisYear: 48,                       // €
+  daysToNextTier: 43,                       // 90 - 47
+  nextTier: MEMBER_PRICING_TIERS[3],
+};

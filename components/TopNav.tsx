@@ -3,15 +3,16 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Logo } from "./Logo";
-import { Flame, LayoutDashboard, Trophy, User, Building2, Users, BookOpen, Award, BarChart3, Bot, Heart, Map as MapIcon, Sparkles, Crown } from "lucide-react";
+import { Flame, LayoutDashboard, Trophy, User, Building2, Users, BookOpen, Award, BarChart3, Bot, Heart, Map as MapIcon, Sparkles, Crown, Coins } from "lucide-react";
 
 const USER_LINKS = [
   { href: "/user", label: "Dashboard", icon: LayoutDashboard },
   { href: "/map", label: "Carte", icon: MapIcon },
+  { href: "/leagues", label: "Ligues", icon: Trophy },
   { href: "/warpass", label: "War Pass", icon: Sparkles },
   { href: "/challenges", label: "Défis sponsos", icon: Heart },
-  { href: "/user/leaderboard", label: "Classements", icon: Trophy },
-  { href: "/user/sessions", label: "Séances", icon: Flame },
+  { href: "/user/leaderboard", label: "Classements", icon: Crown },
+  { href: "/pricing", label: "Tarifs", icon: Coins },
   { href: "/user/profile", label: "Profil", icon: User },
 ];
 
@@ -19,13 +20,13 @@ const CLUB_LINKS = [
   { href: "/club", label: "Dashboard", icon: LayoutDashboard },
   { href: "/map", label: "Carte", icon: MapIcon },
   { href: "/hq", label: "Siège HQ", icon: Crown },
+  { href: "/leagues", label: "Ligues internes", icon: Trophy },
   { href: "/challenges", label: "Défis sponsos", icon: Heart },
   { href: "/club/automations", label: "Autopilot", icon: Bot },
-  { href: "/club/leagues", label: "Ligues", icon: Trophy },
   { href: "/club/members", label: "Membres", icon: Users },
   { href: "/club/courses", label: "Bonus", icon: BookOpen },
   { href: "/club/coaches", label: "Coachs", icon: Award },
-  { href: "/club/analytics", label: "Analytics", icon: BarChart3 },
+  { href: "/pricing", label: "Tarifs", icon: Coins },
 ];
 
 export function TopNav() {
