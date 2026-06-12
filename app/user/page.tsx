@@ -8,6 +8,7 @@ import { SeasonBadge } from "../../components/SeasonBadge";
 import { TerritoryBanner } from "../../components/TerritoryBanner";
 import { TerritoryMap } from "../../components/TerritoryMap";
 import { ChallengeBanner } from "../../components/ChallengeBanner";
+import { BossRaidBanner } from "../../components/BossRaidBanner";
 import {
   ME, MY_SESSIONS, COURSES, HEALTH_SOURCES,
   getClubLeaderboard, getFriendsLeaderboard, getNeighborhoodLeaderboard,
@@ -46,6 +47,9 @@ export default function UserDashboard() {
 
   return (
     <div className="space-y-6">
+      {/* #0 — BOSS RAID hebdomadaire (l'événement à ne pas manquer) */}
+      <BossRaidBanner />
+
       {/* #1 — IDENTITÉ DE TERRITOIRE (on, avant moi) */}
       <TerritoryBanner scope="user" />
 

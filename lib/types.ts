@@ -232,3 +232,76 @@ export type ClubDuel = {
   myMembers: number;
   rivalMembers: number;
 };
+
+export type GroupHQ = {
+  id: string;
+  brand: string;
+  color: string;
+  ceoName: string;
+  ceoTitle: string;
+  ceoAvatar: string;
+  clubsCount: number;
+  membersCount: number;
+  monthMinutes: number;
+  warCoinsBudget: number;
+  warCoinsSpent: number;
+  rankNational: number;
+  trend: number;
+  trophies: { name: string; year: number; emoji: string }[];
+};
+
+export type CityPin = {
+  city: string;
+  x: number;            // SVG position 0-600
+  y: number;            // SVG position 0-700
+  brands: { brand: string; clubs: number; minutes: number; color: string }[];
+  dominant: string;     // brand name
+};
+
+export type GroupChallenge = {
+  id: string;
+  challenger: string;   // brand name
+  challenged: string;
+  startsAt: string;
+  endsAt: string;
+  challengerMinutes: number;
+  challengedMinutes: number;
+  targetMinutes: number;
+  warCoinPot: number;
+  status: "live" | "pending" | "won" | "lost";
+  participatingClubs: number;
+  participatingMembers: number;
+  stake: string;
+  sponsor?: { name: string; amount: number; currency: string };
+};
+
+export type BattlePassTier = {
+  level: number;
+  pointsRequired: number;
+  freeReward: { label: string; emoji: string; type: "badge" | "bonus" | "coins" | "skin" | "trophy" };
+  premiumReward?: { label: string; emoji: string; type: "badge" | "bonus" | "coins" | "skin" | "trophy" };
+};
+
+export type BattlePassMission = {
+  id: string;
+  label: string;
+  xp: number;
+  done: number;
+  target: number;
+  type: "daily" | "weekly" | "season";
+};
+
+export type BossRaid = {
+  id: string;
+  name: string;
+  description: string;
+  emoji: string;
+  startsAt: string;
+  endsAt: string;
+  targetMinutes: number;
+  currentMinutes: number;
+  participatingClubs: number;
+  participatingMembers: number;
+  rewardIfBeaten: string;
+  status: "live" | "won" | "missed";
+};

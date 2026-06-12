@@ -6,6 +6,7 @@ import { SeasonBadge } from "../../components/SeasonBadge";
 import { TerritoryBanner } from "../../components/TerritoryBanner";
 import { TerritoryMap } from "../../components/TerritoryMap";
 import { ChallengeBanner } from "../../components/ChallengeBanner";
+import { BossRaidBanner } from "../../components/BossRaidBanner";
 import {
   MY_CLUB, CLUB_KPIS, weeklyMinutesSeries, membersGrowthSeries,
   COURSES, LEAGUES, getClubLeaderboard,
@@ -32,6 +33,9 @@ export default function ClubDashboard() {
 
   return (
     <div className="space-y-6">
+      {/* #0 — BOSS RAID hebdomadaire */}
+      <BossRaidBanner />
+
       {/* #1 — TERRITOIRE : la guerre du quartier */}
       <TerritoryBanner scope="club" />
 

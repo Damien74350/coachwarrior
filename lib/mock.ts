@@ -2,6 +2,7 @@ import type {
   User, Session, Club, League, LeagueStanding, Course, Coach, ClubKpis, Tier,
   Season, Friend, HealthSource, CheckinSpot, AutoRule,
   Sponsor, Cause, SponsoredChallenge, TerritoryRival, Territory, ClubDuel,
+  GroupHQ, CityPin, GroupChallenge, BattlePassTier, BattlePassMission, BossRaid,
 } from "./types";
 
 const FIRST = ["Alex", "Marie", "Lucas", "Sofia", "Theo", "Emma", "Noah", "Léa", "Hugo", "Camille", "Jules", "Chloé", "Ethan", "Inès", "Adam", "Sarah", "Tom", "Zoé", "Liam", "Jade", "Mateo", "Lina", "Gabriel", "Nina", "Raphaël", "Mila", "Arthur", "Anna", "Louis", "Eva"];
@@ -758,3 +759,209 @@ export function totalDonationsThisMonth(): { eur: number; chf: number; jpy: numb
   });
   return { eur, chf, jpy, count: won.length };
 }
+
+// ────────────────────────────────────────────────────────────
+// HQ DASHBOARD — pour les sièges de chaîne. Inter-groupe rivalry.
+// Basic-Fit France vs Fitness Park France vs Iron Republic France.
+// ────────────────────────────────────────────────────────────
+
+export const GROUPS_HQ: GroupHQ[] = [
+  { id: "g_kc", brand: "Keep Cool",     color: "#eab308", ceoName: "François Mancel",  ceoTitle: "PDG Keep Cool France",       ceoAvatar: "FM",
+    clubsCount: 380, membersCount: 940_000, monthMinutes: 88_240_000, warCoinsBudget: 250_000, warCoinsSpent: 180_400, rankNational: 1, trend: +1,
+    trophies: [{ name: "Champion National 2025", year: 2025, emoji: "🏆" }, { name: "Boss Raid Hero", year: 2025, emoji: "👑" }] },
+  { id: "g_fp", brand: "Fitness Park",  color: "#10b981", ceoName: "Sandra Borel",     ceoTitle: "DG Fitness Park France",     ceoAvatar: "SB",
+    clubsCount: 220, membersCount: 1_400_000, monthMinutes: 124_180_000, warCoinsBudget: 320_000, warCoinsSpent: 210_500, rankNational: 2, trend: 0,
+    trophies: [{ name: "Champion Régional Ouest", year: 2025, emoji: "🥇" }] },
+  { id: "g_bf", brand: "Basic-Fit",     color: "#fb923c", ceoName: "Marc Vellard",     ceoTitle: "Directeur France Basic-Fit", ceoAvatar: "MV",
+    clubsCount: 180, membersCount: 820_000, monthMinutes: 64_320_000, warCoinsBudget: 280_000, warCoinsSpent: 245_800, rankNational: 3, trend: +2,
+    trophies: [{ name: "Saison Été MVP", year: 2025, emoji: "🥈" }] },
+  { id: "g_oa", brand: "On Air",        color: "#a78bfa", ceoName: "Lila Ferrand",     ceoTitle: "CEO On Air",                 ceoAvatar: "LF",
+    clubsCount: 65, membersCount: 280_000, monthMinutes: 28_980_000, warCoinsBudget: 140_000, warCoinsSpent: 92_100, rankNational: 4, trend: -1,
+    trophies: [] },
+  { id: "g_ne", brand: "Neoness",       color: "#22d3ee", ceoName: "Théo Albani",      ceoTitle: "Directeur Général Neoness",  ceoAvatar: "TA",
+    clubsCount: 45, membersCount: 220_000, monthMinutes: 19_340_000, warCoinsBudget: 100_000, warCoinsSpent: 64_300, rankNational: 5, trend: 0,
+    trophies: [] },
+  { id: "g_ir", brand: "Iron Republic", color: "#f43f5e", ceoName: "Damien Roux",      ceoTitle: "Co-founder Iron Republic",   ceoAvatar: "DR",
+    clubsCount: 42, membersCount: 95_000, monthMinutes: 14_240_000, warCoinsBudget: 80_000, warCoinsSpent: 71_200, rankNational: 6, trend: +1,
+    trophies: [{ name: "Boutique de l'année", year: 2025, emoji: "💎" }] },
+];
+
+export const MY_GROUP = GROUPS_HQ.find(g => g.brand === "Iron Republic")!;
+
+// Carte de France — positions des grandes villes
+export const FRANCE_CITY_PINS: CityPin[] = [
+  { city: "Paris", x: 320, y: 200,
+    brands: [
+      { brand: "Basic-Fit",     clubs: 24, minutes: 2_840_000, color: "#fb923c" },
+      { brand: "Fitness Park",  clubs: 18, minutes: 2_120_000, color: "#10b981" },
+      { brand: "Keep Cool",     clubs: 32, minutes: 3_280_000, color: "#eab308" },
+      { brand: "Iron Republic", clubs: 6,  minutes: 1_640_000, color: "#f43f5e" },
+      { brand: "On Air",        clubs: 8,  minutes: 1_120_000, color: "#a78bfa" },
+      { brand: "Neoness",       clubs: 6,  minutes: 820_000,   color: "#22d3ee" },
+    ],
+    dominant: "Keep Cool" },
+  { city: "Lyon", x: 380, y: 380,
+    brands: [
+      { brand: "Fitness Park",  clubs: 14, minutes: 1_680_000, color: "#10b981" },
+      { brand: "Keep Cool",     clubs: 18, minutes: 1_840_000, color: "#eab308" },
+      { brand: "Basic-Fit",     clubs: 10, minutes: 1_120_000, color: "#fb923c" },
+      { brand: "Iron Republic", clubs: 3,  minutes: 720_000,   color: "#f43f5e" },
+    ],
+    dominant: "Keep Cool" },
+  { city: "Marseille", x: 380, y: 520,
+    brands: [
+      { brand: "Fitness Park",  clubs: 12, minutes: 1_420_000, color: "#10b981" },
+      { brand: "Keep Cool",     clubs: 8,  minutes: 880_000,   color: "#eab308" },
+      { brand: "Basic-Fit",     clubs: 6,  minutes: 640_000,   color: "#fb923c" },
+    ],
+    dominant: "Fitness Park" },
+  { city: "Bordeaux", x: 180, y: 420,
+    brands: [
+      { brand: "Keep Cool",     clubs: 12, minutes: 1_080_000, color: "#eab308" },
+      { brand: "Fitness Park",  clubs: 8,  minutes: 740_000,   color: "#10b981" },
+      { brand: "Neoness",       clubs: 4,  minutes: 320_000,   color: "#22d3ee" },
+    ],
+    dominant: "Keep Cool" },
+  { city: "Lille", x: 320, y: 90,
+    brands: [
+      { brand: "Basic-Fit",     clubs: 18, minutes: 1_840_000, color: "#fb923c" },
+      { brand: "Fitness Park",  clubs: 10, minutes: 980_000,   color: "#10b981" },
+      { brand: "Keep Cool",     clubs: 8,  minutes: 720_000,   color: "#eab308" },
+    ],
+    dominant: "Basic-Fit" },
+  { city: "Nantes", x: 170, y: 280,
+    brands: [
+      { brand: "Fitness Park",  clubs: 10, minutes: 1_120_000, color: "#10b981" },
+      { brand: "Keep Cool",     clubs: 12, minutes: 1_080_000, color: "#eab308" },
+      { brand: "On Air",        clubs: 4,  minutes: 380_000,   color: "#a78bfa" },
+    ],
+    dominant: "Fitness Park" },
+  { city: "Toulouse", x: 240, y: 510,
+    brands: [
+      { brand: "Keep Cool",     clubs: 14, minutes: 1_280_000, color: "#eab308" },
+      { brand: "Basic-Fit",     clubs: 10, minutes: 980_000,   color: "#fb923c" },
+      { brand: "Fitness Park",  clubs: 8,  minutes: 740_000,   color: "#10b981" },
+    ],
+    dominant: "Keep Cool" },
+  { city: "Strasbourg", x: 460, y: 200,
+    brands: [
+      { brand: "Fitness Park",  clubs: 8,  minutes: 720_000,   color: "#10b981" },
+      { brand: "Basic-Fit",     clubs: 6,  minutes: 540_000,   color: "#fb923c" },
+    ],
+    dominant: "Fitness Park" },
+  { city: "Nice", x: 460, y: 510,
+    brands: [
+      { brand: "Fitness Park",  clubs: 6,  minutes: 580_000,   color: "#10b981" },
+      { brand: "Iron Republic", clubs: 2,  minutes: 380_000,   color: "#f43f5e" },
+    ],
+    dominant: "Fitness Park" },
+];
+
+// Défi NATIONAL en cours: Basic-Fit France vs Fitness Park France
+export const GROUP_CHALLENGES: GroupChallenge[] = [
+  {
+    id: "gc_1",
+    challenger: "Basic-Fit",
+    challenged: "Fitness Park",
+    startsAt: new Date(Date.now() - 8 * 86400000).toISOString(),
+    endsAt: new Date(Date.now() + 22 * 86400000).toISOString(),
+    challengerMinutes: 18_240_000,
+    challengedMinutes: 24_180_000,
+    targetMinutes: 50_000_000,
+    warCoinPot: 480_000,
+    status: "live",
+    participatingClubs: 400,
+    participatingMembers: 2_220_000,
+    stake: "Trophée National + 480k war coins + visibilité presse",
+    sponsor: { name: "Decathlon", amount: 100_000, currency: "€" },
+  },
+  {
+    id: "gc_2",
+    challenger: "Iron Republic",
+    challenged: "On Air",
+    startsAt: new Date(Date.now() - 3 * 86400000).toISOString(),
+    endsAt: new Date(Date.now() + 4 * 86400000).toISOString(),
+    challengerMinutes: 4_120_000,
+    challengedMinutes: 3_840_000,
+    targetMinutes: 8_000_000,
+    warCoinPot: 80_000,
+    status: "live",
+    participatingClubs: 107,
+    participatingMembers: 375_000,
+    stake: "Boutique vs Mainstream — bragging rights nationaux",
+  },
+];
+
+// ────────────────────────────────────────────────────────────
+// WAR PASS — battle pass mensuel, 50 niveaux
+// ────────────────────────────────────────────────────────────
+
+export const MY_BATTLE_PASS = {
+  seasonName: "Saison Hiver 2026 · War Pass",
+  currentLevel: 23,
+  currentXp: 4_320,
+  xpToNextLevel: 6_000,
+  totalLevels: 50,
+  hasPremium: false,
+  daysRemaining: 22,
+};
+
+const BP_REWARDS = [
+  { freeReward: { label: "Welcome pack",       emoji: "🎁", type: "coins" as const },  premiumReward: { label: "Drapeau d'or",        emoji: "🏁", type: "skin" as const   } },
+  { freeReward: { label: "200 war coins",      emoji: "🪙", type: "coins" as const },  premiumReward: { label: "Bonus ×2 perso 24h",  emoji: "⚡", type: "bonus" as const  } },
+  { freeReward: { label: "Badge Premier pas",  emoji: "🌱", type: "badge" as const },  premiumReward: { label: "500 war coins",       emoji: "🪙", type: "coins" as const  } },
+  { freeReward: { label: "Bonus ×1.5 24h",     emoji: "⚡", type: "bonus" as const },  premiumReward: { label: "Badge Pionnier",      emoji: "🥇", type: "badge" as const  } },
+  { freeReward: { label: "300 war coins",      emoji: "🪙", type: "coins" as const },  premiumReward: { label: "Drapeau holographique", emoji: "✨", type: "skin" as const } },
+  { freeReward: { label: "Badge Spartiate",    emoji: "💪", type: "badge" as const },  premiumReward: { label: "1000 war coins",      emoji: "🪙", type: "coins" as const  } },
+  { freeReward: { label: "Bonus ×2 24h",       emoji: "⚡", type: "bonus" as const },  premiumReward: { label: "Skin tier dorure",    emoji: "👑", type: "skin" as const   } },
+  { freeReward: { label: "400 war coins",      emoji: "🪙", type: "coins" as const },  premiumReward: { label: "Trophée Hiver",       emoji: "🏆", type: "trophy" as const } },
+];
+
+export const BATTLE_PASS_TIERS: BattlePassTier[] = Array.from({ length: 50 }, (_, i) => {
+  const level = i + 1;
+  const base = BP_REWARDS[i % BP_REWARDS.length];
+  return {
+    level,
+    pointsRequired: 1000 + i * 250,
+    freeReward: base.freeReward,
+    premiumReward: base.premiumReward,
+  };
+});
+
+export const BATTLE_PASS_MISSIONS: BattlePassMission[] = [
+  // Daily
+  { id: "m_1", label: "Check-in au club aujourd'hui",          xp: 200,  done: 1,  target: 1,   type: "daily" },
+  { id: "m_2", label: "30 minutes d'activité",                 xp: 300,  done: 24, target: 30,  type: "daily" },
+  { id: "m_3", label: "Participer à un cours collectif",       xp: 400,  done: 0,  target: 1,   type: "daily" },
+  // Weekly
+  { id: "m_4", label: "5 séances cette semaine",                xp: 1000, done: 3,  target: 5,   type: "weekly" },
+  { id: "m_5", label: "Contribuer 300 min au défi du club",     xp: 1200, done: 184, target: 300, type: "weekly" },
+  { id: "m_6", label: "Inviter un ami sur WARfit",              xp: 800,  done: 0,  target: 1,   type: "weekly" },
+  { id: "m_7", label: "Tester 3 cours différents",              xp: 900,  done: 1,  target: 3,   type: "weekly" },
+  // Season
+  { id: "m_8", label: "Streak 30 jours",                        xp: 5000, done: 23, target: 30,  type: "season" },
+  { id: "m_9", label: "Atteindre Diamant",                      xp: 8000, done: 16240, target: 25000, type: "season" },
+  { id: "m_10", label: "Gagner un défi de club",                xp: 3000, done: 1,  target: 1,   type: "season" },
+];
+
+// ────────────────────────────────────────────────────────────
+// BOSS RAID hebdomadaire — événement collaboratif mondial
+// ────────────────────────────────────────────────────────────
+
+export const CURRENT_BOSS_RAID: BossRaid = {
+  id: "br_1",
+  name: "Le Géant du Dimanche",
+  description: "Mobilisation mondiale 24h. Tous les clubs WARfit s'unissent pour terrasser le Géant. Si on atteint 10M de minutes avant minuit dimanche, TOUS les membres reçoivent 500 war coins + un badge unique.",
+  emoji: "🐉",
+  startsAt: new Date(Date.now() - 14 * 3600000).toISOString(),
+  endsAt: new Date(Date.now() + 10 * 3600000).toISOString(),
+  targetMinutes: 10_000_000,
+  currentMinutes: 7_840_000,
+  participatingClubs: 612,
+  participatingMembers: 184_320,
+  rewardIfBeaten: "500 war coins + Badge 'Slayer' légendaire pour TOUS",
+  status: "live",
+};
+
+// War Coins du membre
+export const MY_WAR_COINS = 1_280;
